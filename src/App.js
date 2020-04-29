@@ -13,7 +13,7 @@ const ButtonGroup = Button.Group;
 						messageStyle: 'none',
 						tex2jax: {inlineMath: [['$','$']], preview: 'none'},
 						jax: ["input/TeX", "output/SVG"],
-						TeX: { equationNumbers: { autoNumber: "AMS" }}
+						TeX: { equationNumbers: { }}
 				});
 		</script>
 	`
