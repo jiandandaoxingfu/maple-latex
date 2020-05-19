@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.css';
+import { Button, Layout, Divider, Input, Col, Row, Card, Upload, Icon } from 'antd';
 
-import { Button, Layout, Divider, Input, Col, Row, Card } from 'antd';
+const md = require('markdown-it')();
 const { Sider, Header, Content, Footer } = Layout;
 const InputGroup = Input.Group;
 const ButtonGroup = Button.Group;
@@ -79,6 +80,9 @@ const TEXT =
 					\\end{aligned}
 				单个公式：如
 					x^2 + y^2
+		typora:
+			读取typora生成的markdown文档并解析。
+			目前仅支持标题，数学公式解析。
 
 		
 		双击： 左侧收起/恢复，
@@ -373,8 +377,8 @@ function DT_coe() {
 }
 
 function latex2maple() {
-// lc: latex code of align/array/$$, created by mathpix-snipping-tool.exe
-// return: maple expression。
+	// lc: latex code of align/array/$$, created by mathpix-snipping-tool.exe
+	// return: maple expression。
 	let lc = $$('input').value.replace(/\\\\/g, '');
 	let type = '';
 	if( lc.includes('align') ) {
@@ -413,8 +417,6 @@ function latex2maple() {
 		return code;
 	}) )
 
-	console.log(lc);
-
 	if( type === 'matrix' ) {
 		lc = 'Matrix3('
 			+ JSON.stringify(lc).replace(/"/g, '')
@@ -429,8 +431,25 @@ function latex2maple() {
 	$$('input').value += '\r\n\r\n' + lc;
 }
 
-
-
+function typora() {
+	// 解析typora文档，支持数学公式
+	let file = $$('typora-upload').files[0];
+	if( !file.name.match(/\.md$/) ) return
+	let reader = new FileReader();
+    reader.onload = function(){
+    	let result = this.result.replace(/((<|>))/g, ' $1 ');
+    	document.getElementById('input').value = result;
+    	let matches = result.match(/\r\n#+.*?\r\n/g);
+		for(let match of matches) {
+			let depth = match.match(/#+/)[0].length;
+			let match_ = `\n <h${depth}>` + match.split(/#+/)[1].slice(0, -1) + `</h${depth}>\n`;
+			result = result.replace(match, match_);
+		}
+    	document.getElementById('output').innerHTML = result;
+    	window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, document.getElementById('output')]);
+    };
+    reader.readAsText(file);
+}
 
 class Table extends React.Component {
 		state = {
@@ -625,20 +644,39 @@ export default () => {
 	var continuous_szce_formula = () =>{ set_input_format_szce("0") };
 	var discrete_szce_formula = () =>{ set_input_format_szce("1") };
 	var inputOnchange = () => { renderer($$('input'), $$('output')) };
-	const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', '连续公式格式化', '离散公式格式化', '展式系数格式化', 'szce格式化', '离散szce格式化', 'DT-gT', 'DT-coe', 'latex2maple'];
-	const btn_click = [show_guide, show_table, excel2table, continuous_formula, discrete_formula, coeff_formula, continuous_szce_formula, discrete_szce_formula, DT_gauge, DT_coe, latex2maple];
+	const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', '连续公式格式化', '离散公式格式化', '展式系数格式化', 'szce格式化', '离散szce格式化', 'DT-gT', 'DT-coe', 'latex2maple', 'typora'];
+	const btn_click = [show_guide, show_table, excel2table, continuous_formula, discrete_formula, coeff_formula, continuous_szce_formula, discrete_szce_formula, DT_gauge, DT_coe, latex2maple, typora];
 	const btn_type = ['primary', 'default', 'danger', 'dashed'];
 	const btn_arr = () => {
 		let n = btn_name.length;
 		let arr = [];
-		for( let i=0; i<n; i++ ) {
+		for( let i=0; i<n-1; i++ ) {
 			arr.push( 
-				<Button style={ styles.button } 
+				<Button
+					style={ styles.button } 
 					onClick={ btn_click[i] }
 					type={ btn_type[Math.floor(i%4)] } 
-					key={ i }>{ btn_name[i] }
-				</Button> );
+					key={ i }
+				>
+					{ btn_name[i] }
+				</Button> 
+			);
 		}
+
+		arr.push(
+			<Upload 
+				beforeUpload = {btn_click[n-1]}
+				id="typora-upload" >
+          		<Button
+					style={ styles.button } 
+					type={ btn_type[Math.floor((n-1)%4)] } 
+					key={ n-1 }
+          		>
+            		<Icon type="upload" /> {btn_name[n-1]}
+          		</Button>
+        	</Upload> 
+		);
+
 		return arr;
 	}
 
