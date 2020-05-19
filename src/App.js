@@ -111,7 +111,7 @@ function show_guide() {
 
 // 双击左侧输入区收起
 var is_left_hide = true;
-document.addEventListener('dblclick', function() {
+document.body.addEventListener('dblclick', function() {
 	if(is_left_hide) {
 		$$('left').style.display = 'none';
 		$$('sider').style.minWidth = '99%';
@@ -450,6 +450,7 @@ function typora() {
 		maths = maths.map( math => {
 			result = result.replace(math, 'EQUATION-TO-REPLACE');
 			return math.replace(/(<|>)/g, ' $1 ')
+					.replace(/\\\\/g, '\\\\  ')
 					.replace(/\\(R|C|Z|N)([^a-zA-Z])/g, '\\mathbb{$1}$2')
 					.replace(/\\part([^i])/g, '\\partial$1')
 					.replace(/(^\$\$|\$\$$)/g, '$$$$$$'); // replace会把两个$$变成一个。
@@ -465,8 +466,8 @@ function typora() {
 		document.getElementById('output').innerHTML = result;
     	document.getElementById('input').value = result;
 
-    	window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, document.getElementById('output')]);
-    };
+    	window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, $$('output')]);
+    }
     reader.readAsText(file);
 }
 
