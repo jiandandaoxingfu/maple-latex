@@ -399,31 +399,42 @@ function latex2maple() {
 	lc = lc.map( arr => arr.map( code => {
 		code = code.replace(/\\mathrm{i}/g, ' I '); // 复数i
 
+		// x^{3} --> x^3
+		code = code.replace(/\^{(\d+)}/g, '^$1 ');
 		// x^{-3} --> x^(-3)
-		code = code.replace(/\^{(-?\d+)}/g, '^($1)');
+		code = code.replace(/\^{(-\d+)}/g, '^($1)');
 		// \lambda --> lambda
-		code = code.replace(/\\(lambda|zeta|eta)/g, 'lambda');
+		code = code.replace(/\\(lambda|zeta|eta)/g, ' lambda ');
+		// \frac{2}{3} --> 2/3
+		code = code.replace(/\\frac{(\d+)}{(\d+)}/g, ' $1/$2 ');
 		// \frac{2a}{2b} --> 2a/2b
-		code = code.replace(/\\frac{(\w+)}{(\w+)}/g, '($1)/($2)');
+		code = code.replace(/\\frac{(\w+)}{(\w+)}/g, ' ($1)/($2) ');
 		// w_{12} --> w12(x, t)
 		code = code.replace(/(\w)_{(\d+)}/g, '$1$2');
 		// \left( * \right) -->  ( * )
 		code = code.replace(/\\left\((.*?)\\right\)/g, '($1)');
+		// \left[ * \right] -->  ( * )
+		code = code.replace(/\\left\[(.*?)\\right\]/g, '($1)');
 		// w_{x} --> diff(w(x), x);
-		code = code.replace(/(\w)_{([a-z])}/g, 'diff($1($2), $2)');
+		code = code.replace(/(\w)_{([a-z])}/g, ' diff($1($2), $2)');
+		// ( w - v )_{x}  --> diff( w - v, x)
+		code = code.replace(/\(([a-zA-Z0-9/+\^-\s]+)\)_{([a-z])}/g, ' diff($1, $2)');
 		// w_{12, x..x} --> diff(w12(x), x$n) n < 9
 		// w_{x..x}	 --> diff(w(x), x$n), n < 10
+		// ( w - v )_{x..x}  --> diff( w - v, x$n), n < 9
 		for(let i=1; i<=8; i++) {
 			let re1 = RegExp(`(\\w)_{(\\d+),(\\s\\w){${i}}}`, 'g'),
-				re2 = RegExp(`(\\w)_{(\\w)(\\s\\w){${i}}}`, 'g');
-			code = code.replace(re1, `diff($1$2($3), $3$$${i})`);
-			code = code.replace(re2, `diff($1($2), $2$$${i+1})`);
+				re2 = RegExp(`(\\w)_{(\\w)(\\s\\w){${i}}}`, 'g'),
+				re3 = RegExp(`\\(([a-zA-Z0-9/+\\^-\\s]+)\\)_{(\\w)(\\s\\w){${i}}}`);
+			code = code.replace(re1, ` diff($1$2($3), $3$$${i})`);
+			code = code.replace(re2, ` diff($1($2), $2$$${i+1})`);
+			code = code.replace(re3, ` diff($1, $2$$${i+1})`);
 		}
 		return code;
 	}) )
 
 	if( type === 'matrix' ) {
-		lc = 'Matrix3('
+		lc = 'Matrix('
 			+ JSON.stringify(lc).replace(/"/g, '')
 			+ ')';
 	} else if( type === 'array' ) {
