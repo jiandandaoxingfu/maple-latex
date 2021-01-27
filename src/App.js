@@ -407,8 +407,8 @@ function latex2maple() {
 		code = code.replace(/\\(lambda|zeta|eta)/g, ' lambda ');
 		// \frac{2}{3} --> 2/3
 		code = code.replace(/\\frac{(\d+)}{(\d+)}/g, ' $1/$2 ');
-		// \frac{2a}{2b} --> 2a/2b
-		code = code.replace(/\\frac{(\w+)}{(\w+)}/g, ' ($1)/($2) ');
+		// \frac{expr1}{expr2} --> 2a/2b
+		code = code.replace(/\\frac{(.*?)}{(.*?)}/g, ' ($1)/($2) ');
 		// w_{12} --> w12(x, t)
 		code = code.replace(/(\w)_{(\d+)}/g, '$1$2');
 		// \left( * \right) -->  ( * )

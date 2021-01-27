@@ -157,26 +157,71 @@
 			}
 
 			function P() {
-				var t = H("input").value.replace(/\\\\/g, ""),
-					e = "";
-				t.includes("align") ? (t = t.split(/\n/g).slice(1, -1).map((function(t) {
-					return t.split(/&/g).slice(1)
-				})), e = "array") : t.includes("array") ? (t = t.split(/\n/g).slice(1, -1).map((function(t) {
-					return t.split(/&/g)
-				})), e = "matrix") : t = [
-					[t]
-				], t = t.map((function(t) {
-					return t.map((function(t) {
-						t = (t = (t = (t = (t = (t = (t = (t = (t = (t = (t = t.replace(/\\mathrm{i}/g, " I ")).replace(/\^{(\d+)}/g, "^$1 ")).replace(/\^{(-\d+)}/g, "^($1)")).replace(/\\(lambda|zeta|eta)/g, " lambda ")).replace(/\\frac{(\d+)}{(\d+)}/g, " $1/$2 ")).replace(/\\frac{(\w+)}{(\w+)}/g, " ($1)/($2) ")).replace(/(\w)_{(\d+)}/g, "$1$2")).replace(/\\left\((.*?)\\right\)/g, "($1)")).replace(/\\left\[(.*?)\\right\]/g, "($1)")).replace(/(\w)_{([a-z])}/g, " diff($1($2), $2)")).replace(/\(([a-zA-Z0-9/+\^-\s]+)\)_{([a-z])}/g, " diff($1, $2)");
-						for (var e = 1; e <= 8; e++) {
-							var a = RegExp("(\\w)_{(\\d+),(\\s\\w){".concat(e, "}}"), "g"),
-								n = RegExp("(\\w)_{(\\w)(\\s\\w){".concat(e, "}}"), "g"),
-								r = RegExp("\\(([a-zA-Z0-9/+\\^-\\s]+)\\)_{(\\w)(\\s\\w){".concat(e, "}}"));
-							t = (t = (t = t.replace(a, " diff($1$2($3), $3$$".concat(e, ")"))).replace(n, " diff($1($2), $2$$".concat(e + 1, ")"))).replace(r, " diff($1, $2$$".concat(e + 1, ")"))
-						}
-						return t
-					}))
-				})), t = "matrix" === e ? "Matrix(" + JSON.stringify(t).replace(/"/g, "") + ")" : "array" === e ? "[" + JSON.stringify(t).replace(/(\[|\]|")/g, "") + "]" : t[0][0], H("input").value += "\r\n\r\n" + t
+				// lc: latex code of align/array/$$, created by mathpix-snipping-tool.exe
+				// return: maple expression。
+				let lc = H('input').value.replace(/\\\\/g, '');
+				let type = '';
+				if( lc.includes('align') ) {
+					lc = lc.split(/\n/g).slice(1, -1).map( d => d.split(/&/g).slice(1) );
+					type = 'array';
+				} else if( lc.includes('array') ) {
+					lc = lc.split(/\n/g).slice(1, -1).map( d => d.split(/&/g) );
+					type = 'matrix';
+				} else { // lc of single expression
+					lc = [[lc]];
+				}
+			
+				lc = lc.map( arr => arr.map( code => {
+					code = code.replace(/\\mathrm{i}/g, ' I '); // 复数i
+			
+					// x^{3} --> x^3
+					code = code.replace(/\^{(\d+)}/g, '^$1 ');
+					// x^{-3} --> x^(-3)
+					code = code.replace(/\^{(-\d+)}/g, '^($1) ');
+					// \lambda --> lambda
+					code = code.replace(/\\((lambda|zeta|eta|xi|gamma|alpha|beta|delta))/g, '$1');
+					// x_{3} --> x[3]
+					code = code.replace(/_{(\d)}/g, '[$1]');
+					// \frac{2}{3} --> 2/3
+					code = code.replace(/\\frac{(\d+)}{(\d+)}/g, ' $1/$2 ');
+					// \frac{expr1}{expr2} --> 2a/2b
+					code = code.replace(/\\frac{(.*?)}{(.*?)}/g, ' ($1)/($2) ');
+					// w_{12} --> w12(x, t)
+					code = code.replace(/(\w)_{(\d+)}/g, '$1$2');
+					// \left( * \right) -->  ( * )
+					code = code.replace(/\\left\((.*?)\\right\)/g, ' ( $1 ) ');
+					// \left[ * \right] -->  ( * )
+					code = code.replace(/\\left\[(.*?)\\right\]/g, ' ( $1 ) ');
+					// w_{x} --> diff(w(x), x); 
+					code = code.replace(/(\w)_{([a-z])}/g, ' diff($1($2), $2) ');
+					// ( w - v )_{x}  --> diff( w - v, x)
+					code = code.replace(/\(([a-zA-Z0-9/+\^-\s]+)\)_{([a-z])}/g, ' diff($1, $2) ');
+					// w_{12, x..x} --> diff(w12(x), x$n) n < 9
+					// w_{x..x}	 --> diff(w(x), x$n), n < 10
+					// ( w - v )_{x..x}  --> diff( w - v, x$n), n < 9
+					for(let i=1; i<=8; i++) {
+						let re1 = RegExp(`(\\w)_{(\\d+),(\\s\\w){${i}}}`, 'g'),
+							re2 = RegExp(`(\\w)_{(\\w)(\\s\\w){${i}}}`, 'g'),
+							re3 = RegExp(`\\(([a-zA-Z0-9/+\\^-\\s]+)\\)_{(\\w)(\\s\\w){${i}}}`);
+						code = code.replace(re1, ` diff($1$2($3), $3$$${i})`);
+						code = code.replace(re2, ` diff($1($2), $2$$${i+1})`);
+						code = code.replace(re3, ` diff($1, $2$$${i+1})`);
+					}
+					return code + '                     ';
+				}) )
+
+				if( type === 'matrix' ) {
+					lc = 'Matrix('
+						+ JSON.stringify(lc).replace(/"/g, '')
+						+ ')';
+				} else if( type === 'array' ) {
+					lc = '['
+						+ JSON.stringify(lc).replace(/(\[|\]|")/g, '')
+						+ ']';
+				} else {
+					lc = lc[0][0];
+				}
+				H('input').value += '\r\n\r\n' + lc;
 			}
 
 			function V() {
