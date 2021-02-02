@@ -712,9 +712,9 @@ export default () => {
   var continuous_szce_formula = () =>{ set_input_format_szce("0") };
   var discrete_szce_formula = () =>{ set_input_format_szce("1") };
   var inputOnchange = () => { renderer($$('input'), $$('output')) };
-  const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'typora', 'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', '离散公式格式化', '离散szce格式化'];
-  const btn_click = [show_guide, show_table, excel2table, latex2maple, typora, continuous_formula, coeff_formula, continuous_szce_formula, discrete_formula, discrete_szce_formula, DT_gauge, DT_coe];
-  const btn_type = ["default", "primary", "primary", "primary", "primary", "default", "default", "dashed", "dashed", "dashed", "danger", "danger"];
+  const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', '离散公式格式化', '离散szce格式化', 'typora'];
+  const btn_click = [show_guide, show_table, excel2table, latex2maple, continuous_formula, coeff_formula, continuous_szce_formula, discrete_formula, discrete_szce_formula, DT_gauge, DT_coe, typora];
+  const btn_type = ["default", "primary", "primary", "primary", "default", "default", "dashed", "dashed", "dashed", "danger", "danger", "primary"];
   const btn_arr = () => {
     let n = btn_name.length;
     let arr = [];
