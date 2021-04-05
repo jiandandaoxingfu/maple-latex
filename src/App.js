@@ -411,7 +411,11 @@ function DT_coe() {
 function latex2maple() {
   // lc: latex code of align/array/$$, created by mathpix-snipping-tool.exe
   // return: maple expression 
-  let lc = $$('input').value.replace(/\\\\/g, '');
+  // \left[ eq1, ...\left.\\
+  //    \right.		eq2 \right] --> (eq1 + eq2)
+  let lc = $$('input').value.replace(/\\right\. \\\\\n\\left\./g, '');
+  lc = lc.replace(/\\right\. \\\\\n/g, '');
+  lc = lc.replace(/\\\\/g, '');
   let type = '';
   if (lc.includes('align')) {
     lc = lc.split(/\n/g).slice(1, -1).map(d => d.split(/&/g).slice(1));
