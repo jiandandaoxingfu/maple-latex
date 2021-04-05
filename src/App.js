@@ -439,10 +439,10 @@ function latex2maple() {
     // \left[ * \right] -->  ( * )
     c = c.replace(/\\left\[(.*?)\\right\]/g, ' ( $1 ) ');
     // v_{n-1} --> v(n-1)
-    c = c.replace(/_{n}/g, '(n)');
-    c = c.replace(/_{n([+-])(\d+)}/g, '(n$1$2)');
+    c = c.replace(/_{n}/g, '(n) ');
+    c = c.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
     // a_{m} --> a[m]
-    c = c.replace(/_{(m|k|l|i|j)}/g, '[$1]');
+    c = c.replace(/_{(m|k|l|i|j)}/g, '[$1] ');
     // w_{x} --> diff(w(x), x); 
     c = c.replace(/(\w)_{([a-z])}/g, ' diff($1($2), $2) ');
     // ( w - v )_{x}  --> diff( (w - v)(x), x)
@@ -467,11 +467,11 @@ function latex2maple() {
     c = c.replace(/_{(\w+)}/g, '$1');
     c = c.replace(/_{(.*?)}/g, '[$1]');
     // x^{3n + 1} --> x^(3n + 1)
-    c = c.replace(/\^{(.*?)}/g, '^($1)');
+    c = c.replace(/\^{(.*?)}/g, '^($1) ');
     // \frac{expr1}{expr2} --> 2a/2b
     c = c.replace(/\\frac{(.*?)}{(.*?)}/g, ' ($1)/($2) ');
     // {.*?} --> (.*?)
-    c = c.replace(/{(.*?)}/g, '($1)');
+    c = c.replace(/{(.*?)}/g, '($1) ');
     // \ --> ""
     c = c.replace(/\\/g, '');
     return c + '          ';
