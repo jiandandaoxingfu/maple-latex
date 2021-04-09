@@ -454,9 +454,9 @@ function latex2maple() {
       let re1 = RegExp(`(\\w)_{(\\d+),(\\s\\w){${i}}}`, 'g'),
         re2 = RegExp(`(\\w)_{(\\w)(\\s\\w){${i}}}`, 'g'),
         re3 = RegExp(`\\(([a-zA-Z0-9/+\\^-\\s]+)\\)_{(\\w)(\\s\\w){${i}}}`);
-      c = c.replace(re1, ` diff($1$2($3), $3$$${i})`);
-      c = c.replace(re2, ` diff($1($2), $2$$${i+1})`);
-      c = c.replace(re3, ` diff(($1)(x), $2$$${i+1})`);
+      c = c.replace(re1, ` diff($1$2($3), $3$$${i}) `);
+      c = c.replace(re2, ` diff($1($2), $2$$${i+1}) `);
+      c = c.replace(re3, ` diff(($1)(x), $2$$${i+1}) `);
     }
     // u^{+++} --> u(n+3)
     for (let i = 0; i <= 12; i++) {
@@ -465,7 +465,7 @@ function latex2maple() {
     }
     // x_{3} --> x[3]
     c = c.replace(/_{(\w+)}/g, '$1');
-    c = c.replace(/_{(.*?)}/g, '[$1]');
+    c = c.replace(/_{(.*?)}/g, '[$1] ');
     // x^{3n + 1} --> x^(3n + 1)
     c = c.replace(/\^{(.*?)}/g, '^($1) ');
     // \frac{expr1}{expr2} --> 2a/2b
