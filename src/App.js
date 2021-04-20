@@ -433,7 +433,7 @@ function latex2maple() {
     c = c.replace(/\\(tilde|hat|bar|underline|acute|check){(.*?)}/g, '$2')
     c = c.replace(/\\mathrm{([a-zA-Z])}/g, '$1');
     // \lambda --> lambda
-    c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta)/g, '$1');
+    c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta)/g, '$1 ');
     // \left( * \right) -->  ( * )
     c = c.replace(/\\left\((.*?)\\right\)/g, ' ( $1 ) ');
     // \left[ * \right] -->  ( * )
@@ -474,6 +474,8 @@ function latex2maple() {
     c = c.replace(/{(.*?)}/g, '($1) ');
     // \ --> ""
     c = c.replace(/\\/g, '');
+    // )( --> ) (
+    c = c.replace(/\)\(/g, ') (');
     return c + '          ';
   }))
   
