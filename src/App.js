@@ -424,9 +424,7 @@ function latex2maple() {
     lc = lc.split(/\n/g).slice(1, -1).map(d => d.split(/&/g));
     type = 'matrix';
   } else { // lc of single expression
-    lc = [
-      [lc]
-    ];
+    lc = [[lc]]
   }
 
   lc = lc.map(arr => arr.map(c => {
@@ -435,9 +433,9 @@ function latex2maple() {
     // \lambda --> lambda
     c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta)/g, '$1 ');
     // \left( * \right) -->  ( * )
-    c = c.replace(/\\left\((.*?)\\right\)/g, ' ( $1 ) ');
     // \left[ * \right] -->  ( * )
-    c = c.replace(/\\left\[(.*?)\\right\]/g, ' ( $1 ) ');
+    c = c.replace(/\\left[(\[\]]/g, ' ( ');
+    c = c.replace(/\\right[\)\]]/g, ' ) ');
     // v_{n-1} --> v(n-1)
     c = c.replace(/_{n}/g, '(n) ');
     c = c.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
