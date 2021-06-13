@@ -442,19 +442,19 @@ function latex2maple() {
     // a_{m} --> a[m]
     c = c.replace(/_{(m|k|l|i|j)}/g, '[$1] ');
     // w_{x} --> diff(w(x), x); 
-    c = c.replace(/(\w)_{([a-z])}/g, ' diff($1($2), $2) ');
+    c = c.replace(/(\w)_{([a-z])}/g, ' diff($1, $2) ');
     // ( w - v )_{x}  --> diff( (w - v)(x), x)
-    c = c.replace(/\(([a-zA-Z0-9/+\^-\s]+)\)_{([a-z])}/g, ' diff(($1)(x), $2) ');
-    // w_{12, x..x} --> diff(w12(x), x$n)   
-    // w_{x..x}  --> diff(w(x), x$n),  
-    // ( w - v )_{x..x}  --> diff( (w - v)(x), x$n), 
+    c = c.replace(/\(([a-zA-Z0-9/+\^-\s]+)\)_{([a-z])}/g, ' diff($1, $2) ');
+    // w_{12, x..x} --> diff(w12, x$n)   
+    // w_{x..x}  --> diff(w, x$n),  
+    // ( w - v )_{x..x}  --> diff( (w - v), x$n), 
     for (let i = 1; i <= 12; i++) {
       let re1 = RegExp(`(\\w)_{(\\d+),(\\s\\w){${i}}}`, 'g'),
         re2 = RegExp(`(\\w)_{(\\w)(\\s\\w){${i}}}`, 'g'),
         re3 = RegExp(`\\(([a-zA-Z0-9/+\\^-\\s]+)\\)_{(\\w)(\\s\\w){${i}}}`);
-      c = c.replace(re1, ` diff($1$2($3), $3$$${i}) `);
-      c = c.replace(re2, ` diff($1($2), $2$$${i+1}) `);
-      c = c.replace(re3, ` diff(($1)(x), $2$$${i+1}) `);
+      c = c.replace(re1, ` diff($1$2, $3$$${i}) `);
+      c = c.replace(re2, ` diff($1, $2$$${i+1}) `);
+      c = c.replace(re3, ` diff($1, $2$$${i+1}) `);
     }
     // u^{+++} --> u(n+3)
     for (let i = 0; i <= 12; i++) {
