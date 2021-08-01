@@ -431,7 +431,7 @@ function latex2maple() {
     c = c.replace(/\\(tilde|hat|bar|underline|acute|check){(.*?)}/g, '$2')
     c = c.replace(/\\mathrm{([a-zA-Z])}/g, '$1');
     // \lambda --> lambda
-    c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta)/g, '$1 ');
+    c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta)([a-zA-Z])/g, '$1 $2');
     // \left( * \right) -->  ( * )
     // \left[ * \right] -->  ( * )
     c = c.replace(/\\left[(\[\]]/g, ' ( ');
@@ -440,7 +440,7 @@ function latex2maple() {
     c = c.replace(/_{n}/g, '(n) ');
     c = c.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
     // a_{m} --> a[m]
-    c = c.replace(/_{(m|k|l|i|j)}/g, '[$1] ');
+    c = c.replace(/_{(m|k|l|i|j|p|q|n)}/g, '[$1] ');
     // w_{x} --> diff(w(x), x); 
     c = c.replace(/(\w)_{([a-z])}/g, ' diff($1, $2) ');
     // ( w - v )_{x}  --> diff( (w - v)(x), x)
@@ -462,8 +462,8 @@ function latex2maple() {
       c = c.replace(re, `$1(n $2 ${i+1})`);
     }
     // x_{3} --> x[3]
-    c = c.replace(/_{(\w+)}/g, '$1');
-    c = c.replace(/_{(.*?)}/g, '[$1] ');
+    c = c.replace(/\s*?_{(\d+)}/g, '$1');
+    c = c.replace(/_{(.*?)}/g, '[$1]');
     // x^{3n + 1} --> x^(3n + 1)
     c = c.replace(/\^{(.*?)}/g, '^($1) ');
     // \frac{expr1}{expr2} --> 2a/2b
