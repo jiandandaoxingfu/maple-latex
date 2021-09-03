@@ -464,12 +464,25 @@ function latex2maple() {
     // x_{3} --> x[3]
     c = c.replace(/\s*?_{(\d+)}/g, '$1');
     c = c.replace(/_{(.*?)}/g, '[$1]');
-    // x^{3n + 1} --> x^(3n + 1)
-    c = c.replace(/\^{(.*?)}/g, '^($1) ');
+    // x^{3n + 1} --> x^(3n + 1), 也适用于嵌套问题
+    while( c.indexOf('^{') > -1 ) {
+      let pos = c.indexOf('^{'),
+          num_l = 0,
+          num_r = 0;
+      for( var i = pos + 1; i < c.length; i++ ) {
+        num_l += c[i] === "{" ? 1 : 0;
+        num_r += c[i] === "}" ? 1 : 0;
+        if( num_l === num_r ) {
+              c = c.slice(0, pos + 1) + '(' + c.slice(pos + 2, i) + ')' + c.slice(i+1, c.length);
+              break
+          }
+      }
+    }
     // \frac{expr1}{expr2} --> 2a/2b
-    c = c.replace(/\\frac{(.*?)}{(.*?)}/g, ' ($1)/($2) ');
-    // {.*?} --> (.*?)
-    c = c.replace(/{(.*?)}/g, '($1) ');
+    c = c.replace(/frac/g, '');
+    c = c.replace(/}{/g, ') / (');
+    // {/} --> (/)
+    c = c.replace(/{/g, ' ( ').replace(/}/g, ' ) ');
     // \ --> ""
     c = c.replace(/\\/g, '');
     // )( --> ) (
