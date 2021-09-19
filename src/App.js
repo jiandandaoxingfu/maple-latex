@@ -504,6 +504,29 @@ function latex2maple() {
   $$('input').value += '\r\n\r\n' + lc;
 }
 
+function maple2mma() {
+  // convert mathematical expressions of maple to mathematics.
+  // input: copy the mathematical expressions of maple
+  let lc = $$('input').value;
+  ['exp', 'log', 'sin', 'cos', 'tan'].forEach(func => {
+    while (lc.indexOf(func) > -1) {
+      let pos = lc.indexOf(func),
+        num_l = 0,
+        num_r = 0;
+      for (var i = pos + 3; i < lc.length; i++) {
+        num_l += lc[i] === "(" ? 1 : 0;
+        num_r += lc[i] === ")" ? 1 : 0;
+        if (num_l === num_r) {
+          lc = lc.slice(0, pos) + func[0].toUpperCase() + func.slice(1) + '[' + lc.slice(pos + 4, i) + ']' + lc.slice(i + 1, lc.length);
+          break
+        }
+      }
+    }
+  })
+  $$('input').value += '\r\n\r\n' + lc;
+}
+
+
 function typora() {
   // 解析typora文档，支持数学公式
   let file = $$('typora-upload').files[0];
@@ -733,9 +756,9 @@ export default () => {
   var continuous_szce_formula = () =>{ set_input_format_szce("0") };
   var discrete_szce_formula = () =>{ set_input_format_szce("1") };
   var inputOnchange = () => { renderer($$('input'), $$('output')) };
-  const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', '离散公式格式化', '离散szce格式化', 'typora'];
-  const btn_click = [show_guide, show_table, excel2table, latex2maple, DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, discrete_formula, discrete_szce_formula, typora];
-  const btn_type = ["default", "primary", "primary", "primary", "default", "default", "dashed", "dashed", "dashed", "danger", "danger", "primary"];
+  const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', '离散公式格式化', '离散szce格式化', 'typora'];
+  const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, discrete_formula, discrete_szce_formula, typora];
+  const btn_type = ["default", "primary", "primary", "primary", "primary", "default", "default", "dashed", "dashed", "dashed", "danger", "danger", "primary"];
   const btn_arr = () => {
     let n = btn_name.length;
     let arr = [];
