@@ -8,7 +8,8 @@ import {
   Col,
   Row,
   Card,
-  Upload
+  Upload,
+  Switch
 } from 'antd';
 import {
   UploadOutlined
@@ -59,8 +60,8 @@ var islock = false;
 const TEXT =
   `
     功能: 
-      可以实时预览数学公式(先输入数学环境)，以及excel数据
-      或者文件中复制的列表转列表，创建列表和矩阵。 
+      可以实时预览数学公式(先输入数学环境)，创建列表和矩阵
+      处理Maple生成的latex代码等。
     
     excel数据转列表：  
       输入框清空，将excel数据复制到输入框，点击转换按钮
@@ -105,6 +106,10 @@ const TEXT =
           \\end{aligned}
         单个公式：如
           x^2 + y^2
+    maple2mma:
+      将复制的maple表达式转换为mathematics的表达式。目前支持以下函数：
+          exp, log, abs, sqrt, conjugate, Re, Im,
+          sin, cos, tan, sinh, cosh, tanh, 
     typora:
       读取typora生成的markdown文档并解析。
       目前仅支持标题，数学公式解析。
@@ -112,9 +117,8 @@ const TEXT =
     
     双击： 左侧收起/恢复，
     
-    注： 1. 个人用，不具有普适性，不保证完全正确。上面是未格式化的结果，
-        是正确的。
-         2. 仅支持latex数学公式，其它命令不支持。
+    注：1. 个人用，不具有普适性，不保证完全正确。 
+        2. 仅支持latex数学公式，其它命令不支持。
     `
 var input_value = '';
 var is_show_guide = true;
@@ -509,7 +513,7 @@ function maple2mma() {
   // input: copy the mathematical expressions of maple
   let lc = $$('input').value;
 
-  ['exp', 'log', 'sin', 'cos', 'tan', 'sqrt', 'sinh', 'cosh', 'tanh'].forEach(func => {
+  ['exp', 'log', 'sin', 'cos', 'tan', 'sqrt', 'sinh', 'cosh', 'tanh', 'abs', 'conjugate'].forEach(func => {
     while (lc.indexOf(func) > -1) {
       let pos = lc.indexOf(func),
         num_l = 0,
@@ -634,8 +638,9 @@ class Table extends React.Component {
     table2matrix = () => {
         let eles = document.getElementsByClassName('ele');
         let str_arr = [];
+        let pandend_str = document.getElementById('padend').getElementsByTagName('span')[0].innerText === '补零' ? '0' : '';
         for(let ele of eles) {
-            str_arr.push(ele.value || '0');
+            str_arr.push(ele.value || pandend_str);
         }
         let data = this.data_format(str_arr);
         if( window.event.target.innerText === '生成矩阵' ) {
@@ -656,7 +661,7 @@ class Table extends React.Component {
         let styles = {
             table: {
                 position: 'absolute',
-                width: '540px',
+                width: '600px',
                 top: '150px',
                 left: '0',
                 right: '0',
@@ -665,7 +670,8 @@ class Table extends React.Component {
                 background: 'white'
             },
             InputGroup: { float: 'left', maxWidth: '200px', top: '4px', left: '10px'}, 
-            Button: { margin: '4px', padding: '5px 10px' }
+            Button: { margin: '4px', padding: '5px 10px' },
+            Switch: { top: '10px', transform: 'scale(1.25)', left: '-10px' },
         }
 
         return (
@@ -682,6 +688,7 @@ class Table extends React.Component {
                         </Row>
                     </InputGroup>
                     <ButtonGroup style={{ left: '25px' }}>
+                        <Switch style={ styles.Switch } checkedChildren="补零" unCheckedChildren="不补" defaultChecked id="padend"/>
                         <Button style={ styles.Button } onClick={ this.table2matrix } type='danger'>生成矩阵</Button>
                         <Button style={ styles.Button } onClick={ this.table2matrix } type='default'>生成列表</Button>
                         <Button style={ styles.Button } onClick={ this.close_table }  type='primary'>关闭</Button>
@@ -760,9 +767,15 @@ export default () => {
   var continuous_szce_formula = () =>{ set_input_format_szce("0") };
   var discrete_szce_formula = () =>{ set_input_format_szce("1") };
   var inputOnchange = () => { renderer($$('input'), $$('output')) };
-  const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', '离散公式格式化', '离散szce格式化', 'typora'];
-  const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, discrete_formula, discrete_szce_formula, typora];
-  const btn_type = ["default", "primary", "primary", "primary", "primary", "default", "default", "dashed", "dashed", "dashed", "danger", "danger", "primary"];
+  const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 
+                    'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', 
+                    '离散公式格式化', '离散szce格式化', 'typora'];
+  const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, 
+                     DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, 
+                     discrete_formula, discrete_szce_formula, typora];
+  const btn_type = ["default", "primary", "primary", "primary", "primary", 
+                    "default", "default", "dashed", "dashed", "dashed", 
+                    "danger", "danger", "primary"];
   const btn_arr = () => {
     let n = btn_name.length;
     let arr = [];
