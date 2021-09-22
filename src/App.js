@@ -513,7 +513,7 @@ function maple2mma() {
   // input: copy the mathematical expressions of maple
   let lc = $$('input').value;
 
-  ['exp', 'log', 'sin', 'cos', 'tan', 'sqrt', 'sinh', 'cosh', 'tanh', 'abs', 'conjugate'].forEach(func => {
+  ['exp', 'log', 'sinh', 'cosh', 'tanh', 'sin', 'cos', 'tan', 'sqrt', 'abs', 'conjugate'].forEach(func => {
     while (lc.indexOf(func) > -1) {
       let pos = lc.indexOf(func),
         num_l = 0,
@@ -522,8 +522,8 @@ function maple2mma() {
         num_l += lc[i] === "(" ? 1 : 0;
         num_r += lc[i] === ")" ? 1 : 0;
         if (num_l === num_r) {
-          func = func[0].toUpperCase() + func.slice(1);
-          lc = lc.slice(0, pos) + func + '[' + lc.slice(pos + 4, i) + ']' + lc.slice(i + 1, lc.length);
+          let func_ = func[0].toUpperCase() + func.slice(1);
+          lc = lc.slice(0, pos) + func_ + '[' + lc.slice(pos + 4, i) + ']' + lc.slice(i + 1, lc.length);
           break
         }
       }
