@@ -518,7 +518,7 @@ function maple2mma() {
       let pos = lc.indexOf(func),
         num_l = 0,
         num_r = 0;
-      for (var i = pos + 3; i < lc.length; i++) {
+      for (var i = pos + func.length; i < lc.length; i++) {
         num_l += lc[i] === "(" ? 1 : 0;
         num_r += lc[i] === ")" ? 1 : 0;
         if (num_l === num_r) {
@@ -826,7 +826,9 @@ export default () => {
               </Content>
 
               <Footer style={ styles.footer }>
-                Maple-Latex ©2019 Created by <a target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">JMx</a><br />
+                Maple-Latex ©2019 Created by JMx <a target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">github</a>&nbsp;&nbsp;
+                  <a target="_blank" href="https://gitee.com/jiandandaoxingfu/maple-latex">gitee</a>
+                  <br />
               </Footer>
             </Layout>
 
