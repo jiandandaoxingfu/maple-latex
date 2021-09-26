@@ -468,20 +468,10 @@ function latex2maple() {
     // x_{3} --> x[3]
     c = c.replace(/\s*?_{(\d+)}/g, '$1');
     c = c.replace(/_{(.*?)}/g, '[$1]');
-    // x^{3n + 1} --> x^(3n + 1), 也适用于嵌套问题
-    while( c.indexOf('^{') > -1 ) {
-      let pos = c.indexOf('^{'),
-          num_l = 0,
-          num_r = 0;
-      for( var i = pos + 1; i < c.length; i++ ) {
-        num_l += c[i] === "{" ? 1 : 0;
-        num_r += c[i] === "}" ? 1 : 0;
-        if( num_l === num_r ) {
-              c = c.slice(0, pos + 1) + '(' + c.slice(pos + 2, i) + ')' + c.slice(i+1, c.length);
-              break
-          }
-      }
-    }
+    // x^{3n + 1} --> x^(3n + 1), 
+    c = convert(c, ['{', '}'], '\\^{', power);
+    // sqrt[n]{x+y}
+	c = convert(c, ['{', '}'], 'sqrt(\\[(.*?)\\])?{', sqrt);
     // \frac{expr1}{expr2} --> 2a/2b
     c = c.replace(/frac/g, '');
     c = c.replace(/}{/g, ') / (');
@@ -514,20 +504,7 @@ function maple2mma() {
   let lc = $$('input').value;
 
   ['exp', 'log', 'sinh', 'cosh', 'tanh', 'sin', 'cos', 'tan', 'sqrt', 'abs', 'conjugate'].forEach(func => {
-    while (lc.indexOf(func) > -1) {
-      let pos = lc.indexOf(func),
-        num_l = 0,
-        num_r = 0;
-      for (var i = pos + func.length; i < lc.length; i++) {
-        num_l += lc[i] === "(" ? 1 : 0;
-        num_r += lc[i] === ")" ? 1 : 0;
-        if (num_l === num_r) {
-          let func_ = func[0].toUpperCase() + func.slice(1);
-          lc = lc.slice(0, pos) + func_ + '[' + lc.slice(pos + 4, i) + ']' + lc.slice(i + 1, lc.length);
-          break
-        }
-      }
-    }
+	lc = convert(lc, ['(', ')'], func + '\\(', f2F);
   })
   lc = lc.replaceAll('arc', 'Arc');
 
@@ -569,6 +546,56 @@ function typora() {
   }
   reader.readAsText(file);
 }
+
+function convert(c, bracket, func, callback) {
+	while (c.match(new RegExp(func))) {
+		let m = c.match(new RegExp(func)),
+		 	pos = m.index,
+			len = m[0].length - 1,
+			num_l = 0,
+			num_r = 0;
+		for (var i = pos + len; i < c.length; i++) {
+			num_l += c[i] === bracket[0] ? 1 : 0;
+			num_r += c[i] === bracket[1] ? 1 : 0;
+			if (num_l === num_r) {
+				c = callback(c, pos, i, m);
+				break
+			}
+		}
+	}
+	return c;
+}
+
+function power(c, pos, i) {
+	return c.slice(0, pos + 1) + '(' + c.slice(pos + 2, i) + ')' + c.slice(i + 1, c.length);
+}
+
+function sqrt(c, pos, i, m) {
+	let power = m[2] ? parseInt(m[2]) : 2;
+	return c.slice(0, pos-1) + ' (' + c.slice(pos + m[0].length, i) + ')^(1/' + power + ') ' + c.slice(i + 1, c.length);
+}
+
+function f2F(c, pos, i, m) {;
+	let func = m[0].slice(0, -1),
+		func_ = func[0].toUpperCase() + func.slice(1);
+	return c.slice(0, pos) + func_ + '[' + c.slice(pos + func_.length + 1, i) + ']' + c.slice(i + 1, c.length);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class Table extends React.Component {
     state = {
@@ -845,3 +872,9 @@ export default () => {
       </div>
     );
 }
+
+
+
+
+
+
