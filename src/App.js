@@ -511,42 +511,6 @@ function maple2mma() {
   $$('input').value += '\r\n\r\n' + lc;
 }
 
-
-function typora() {
-  // 解析typora文档，支持数学公式
-  let file = $$('typora-upload').files[0];
-  if (!file.name.match(/\.md$/)) return
-  let reader = new FileReader();
-  reader.onload = function() {
-    let result = this.result;
-    // 匹配所有数学公式，将其中</>号前后加空格，不然会被解析为html标签。
-    // 将每一个公式替换为EQUATION-id，然后使用remarkable解析md，之后在替换回来，
-    // 使用MathJax渲染。
-    let maths = result.match(/\${1,2}(\r\n|.){1,}?\${1,2}/g) || [];
-    maths = maths.map(math => {
-      result = result.replace(math, 'EQUATION-TO-REPLACE');
-      return math.replace(/(<|>)/g, ' $1 ')
-        .replace(/\\\\/g, '\\\\  ')
-        .replace(/\\(R|C|Z|N)([^a-zA-Z])/g, '\\mathbb{$1}$2')
-        .replace(/\\part([^i])/g, '\\partial$1')
-        .replace(/(^\$\$|\$\$$)/g, '$$$$$$'); // replace会把两个$$变成一个。
-    })
-
-    result = result.replace(/(\r\n#+.*?\r\n)/g, '\r\n$1\r\n');
-    result = md.render(result);
-
-    maths.forEach(math => {
-      result = result.replace('EQUATION-TO-REPLACE', math);
-    })
-
-    document.getElementById('output').innerHTML = result;
-    document.getElementById('input').value = result;
-
-    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, $$('output')]);
-  }
-  reader.readAsText(file);
-}
-
 function convert(c, bracket, func, callback) {
 	while (c.match(new RegExp(func))) {
 		let m = c.match(new RegExp(func)),
@@ -582,8 +546,56 @@ function f2F(c, pos, i, m) {;
 }
 
 
+function paper() {
+  let lc = $$('input').value;
+  lc = lc.replace(/\\cite{.*?}/g, '\\cite{}');
+  lc = lc.replace(/\\eqref{.*?}/g, '\\eqref{}');
+  lc = lc.replace(/\\ref{.*?}/g, '\\ref{}');
+  lc = lc.replace(/\\label{.*?}/g, '');
+  lc = lc.replace(/\$.*?\$/g, '$$');
+  lc = lc.replace(/\\begin{align\*?}(.|\n)*?\\end{align\*?}/g, '$ $');
+  lc = lc.replace(/\\begin{equation\*?}(.|\n)*?\\end{equation\*?}/g, '$ $');
+  lc = lc.replace(/\\begin{thebibliography\*?}(.|\n)*?\\end{thebibliography\*?}/g, '');
+  lc = lc.replace(/\d{8}/g, '1');
+  lc = lc.replace(/(.|\n)*\\begin{abstract}/,'');
+  $$('input').value = '\r\n\r\n' + lc;
+}
 
 
+function typora() {
+  // 解析typora文档，支持数学公式
+  let file = $$('typora-upload').files[0];
+  if (!file.name.match(/\.md$/)) return
+  let reader = new FileReader();
+  reader.onload = function() {
+    let result = this.result;
+    // 匹配所有数学公式，将其中</>号前后加空格，不然会被解析为html标签。
+    // 将每一个公式替换为EQUATION-id，然后使用remarkable解析md，之后在替换回来，
+    // 使用MathJax渲染。
+    let maths = result.match(/\${1,2}(\r\n|.){1,}?\${1,2}/g) || [];
+    maths = maths.map(math => {
+      result = result.replace(math, 'EQUATION-TO-REPLACE');
+      return math.replace(/(<|>)/g, ' $1 ')
+        .replace(/\\\\/g, '\\\\  ')
+        .replace(/\\(R|C|Z|N)([^a-zA-Z])/g, '\\mathbb{$1}$2')
+        .replace(/\\part([^i])/g, '\\partial$1')
+        .replace(/(^\$\$|\$\$$)/g, '$$$$$$'); // replace会把两个$$变成一个。
+    })
+
+    result = result.replace(/(\r\n#+.*?\r\n)/g, '\r\n$1\r\n');
+    result = md.render(result);
+
+    maths.forEach(math => {
+      result = result.replace('EQUATION-TO-REPLACE', math);
+    })
+
+    document.getElementById('output').innerHTML = result;
+    document.getElementById('input').value = result;
+
+    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, $$('output')]);
+  }
+  reader.readAsText(file);
+}
 
 
 
@@ -796,13 +808,13 @@ export default () => {
   var inputOnchange = () => { renderer($$('input'), $$('output')) };
   const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 
                     'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', 
-                    '离散公式格式化', '离散szce格式化', 'typora'];
+                    '离散公式格式化', '离散szce格式化', 'paper', 'typora'];
   const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, 
                      DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, 
-                     discrete_formula, discrete_szce_formula, typora];
+                     discrete_formula, discrete_szce_formula, paper, typora];
   const btn_type = ["default", "primary", "primary", "primary", "primary", 
                     "default", "default", "dashed", "dashed", "dashed", 
-                    "danger", "danger", "primary"];
+                    "danger", "danger", "primary", "primary"];
   const btn_arr = () => {
     let n = btn_name.length;
     let arr = [];
