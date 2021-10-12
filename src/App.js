@@ -460,14 +460,16 @@ function latex2maple() {
       c = c.replace(re2, ` diff($1, $2$$${i+1}) `);
       c = c.replace(re3, ` diff($1, $2$$${i+1}) `);
     }
-    // u^{+++} --> u(n+3)
-    for (let i = 0; i <= 12; i++) {
-      let re = RegExp(`([a-zA-Z])\\^{([+-])[+-]{${i}}}`, 'g');
-      c = c.replace(re, `$1(n $2 ${i+1})`);
-    }
+
     // x_{3} --> x[3]
     c = c.replace(/\s*?_{(\d+)}/g, '$1');
     c = c.replace(/_{(.*?)}/g, '[$1]');
+
+    // u^{+++} --> u(n+3)
+    for (let i = 0; i <= 12; i++) {
+      let re = RegExp(`([a-zA-Z0-9]+)\\^{([+-])[+-]{${i}}}`, 'g');
+      c = c.replace(re, `shift($1, $2${i+1})`);
+    }
     // x^{3n + 1} --> x^(3n + 1), 
     c = convert(c, ['{', '}'], '\\^{', power);
     // sqrt[n]{x+y}
