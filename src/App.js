@@ -114,6 +114,13 @@ const TEXT =
       读取typora生成的markdown文档并解析。
       目前仅支持标题，数学公式解析。
 
+    Grammarly:
+      使用Grammarly网站检查论文(英语)小错误。
+      将tex内容中的数学公式等关键信息删除。
+
+    Tex格式化：
+      格式化tex文本。
+
     
     双击： 左侧收起/恢复，
     
@@ -548,7 +555,7 @@ function f2F(c, pos, i, m) {;
 }
 
 
-function paper() {
+function grammarly() {
   let lc = $$('input').value;
   lc = lc.replace(/\\cite{.*?}/g, '\\cite{}');
   lc = lc.replace(/\\eqref{.*?}/g, '\\eqref{}');
@@ -563,6 +570,17 @@ function paper() {
   $$('input').value = '\r\n\r\n' + lc;
 }
 
+// function tex_format() {
+//   let lc = $$('input').value;
+//   // a. A --> a. \n A
+//   lc = lc.replace(/([a-z]|\$)\. {0,}([A-Z])/g, "$1.\n$2");
+
+//   lc = lc.replace(/(.+?)(\\begin\{)/g, '$1\n$2');
+//   lc = lc.replace(/([^\s]+?)[ \t]*(\\end.*?\})/g, '$1\n$2');
+//   lc = lc.replace(/(\\end.*?\})[ \t]*([^\s]+)/g, '$1\n$2');
+//   lc = lc.replace(/(\\begin(\{.*?\}[ \t]*){1,2}(\\label\{.*?\}){0,1})(\w)/g, "$1\n$4");
+//   $$('input').value = lc;
+// }
 
 function typora() {
   // 解析typora文档，支持数学公式
@@ -810,10 +828,10 @@ export default () => {
   var inputOnchange = () => { renderer($$('input'), $$('output')) };
   const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 
                     'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', 
-                    '离散公式格式化', '离散szce格式化', 'paper', 'typora'];
+                    '离散公式格式化', '离散szce格式化', 'grammarly', 'typora'];
   const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, 
                      DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, 
-                     discrete_formula, discrete_szce_formula, paper, typora];
+                     discrete_formula, discrete_szce_formula, grammarly, typora];
   const btn_type = ["default", "primary", "primary", "primary", "primary", 
                     "default", "default", "dashed", "dashed", "dashed", 
                     "danger", "danger", "primary", "primary"];
