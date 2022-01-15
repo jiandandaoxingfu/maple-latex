@@ -441,6 +441,7 @@ function latex2maple() {
   lc = lc.map(arr => arr.map(c => {
     c = c.replace(/\\(tilde|hat|bar|underline|acute|check){(.*?)}/g, '$2')
     c = c.replace(/\\mathrm{([a-zA-Z])}/g, '$1');
+    c = c.replace(/\\times/g, " ");
     // \lambda --> lambda
     c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta)([a-zA-Z])/g, '$1 $2');
     // \left( * \right) -->  ( * )
@@ -450,8 +451,6 @@ function latex2maple() {
     // v_{n-1} --> v(n-1)
     c = c.replace(/_{n}/g, '(n) ');
     c = c.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
-    // a_{m} --> a[m]
-    c = c.replace(/_{(m|k|l|i|j|p|q|n)}/g, '[$1] ');
     // w_{x} --> diff(w(x), x); 
     c = c.replace(/(\w)_{([a-z])}/g, ' diff($1, $2) ');
     // ( w - v )_{x}  --> diff( (w - v)(x), x)
@@ -468,10 +467,6 @@ function latex2maple() {
       c = c.replace(re3, ` diff($1, $2$$${i+1}) `);
     }
 
-    // x_{3} --> x[3]
-    c = c.replace(/\s*?_{(\d+)}/g, '$1');
-    c = c.replace(/_{(.*?)}/g, '[$1]');
-
     // u^{+++} --> u(n+3)
     for (let i = 0; i <= 12; i++) {
       let re = RegExp(`([a-zA-Z0-9]+)\\^{([+-])[+-]{${i}}}`, 'g');
@@ -480,14 +475,34 @@ function latex2maple() {
     // x^{3n + 1} --> x^(3n + 1), 
     c = convert(c, ['{', '}'], '\\^{', power);
     // sqrt[n]{x+y}
-	c = convert(c, ['{', '}'], 'sqrt(\\[(.*?)\\])?{', sqrt);
+	  c = convert(c, ['{', '}'], 'sqrt(\\[(.*?)\\])?{', sqrt);
+    // sin t --> sin(t)
+    c = c.replace(/e\^/g, " \\exp ");
+    c = c.replace(/\\ln /g, "\\log ");
+    ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 'sin', 'cos', 'tan'].forEach(func => {
+      let reg = new RegExp( "\\\\(" + func + ") ([a-zA-Z])", "g");
+      c = c.replace(reg, " $1($2)");
+      reg = new RegExp( "\\\\(" + func + ") ", "g");
+      c = c.replace(reg, " $1");
+      c = convert(c, ['{', '}'], func + '{', f2f);
+      c = convert(c, ['[', ']'], func + '\\[', f2f);
+    })
     // \frac{expr1}{expr2} --> 2a/2b
     c = c.replace(/frac/g, '');
     c = c.replace(/}{/g, ') / (');
-    // {/} --> (/)
-    c = c.replace(/{/g, ' ( ').replace(/}/g, ' ) ');
     // \ --> ""
     c = c.replace(/\\/g, '');
+    c = c.replace(/\[/g, '(');
+    c = c.replace(/\]/g, ')');
+
+    // a_{m} --> a[m]
+    c = c.replace(/_ ?{(m|k|l|i|j|p|q|n)}/g, '[$1] ');
+    c = c.replace(/\s*?_{(\d+)}/g, '$1');
+    c = c.replace(/_ ?{(.*?)}/g, '[$1]');
+    
+    // {/} --> (/)
+    c = c.replace(/{/g, ' ( ').replace(/}/g, ' ) ');
+
     // )( --> ) (
     c = c.replace(/\)\(/g, ') (');
     return c + '          ';
@@ -507,13 +522,15 @@ function latex2maple() {
   $$('input').value += '\r\n\r\n' + lc;
 }
 
+
+
 function maple2mma() {
   // convert mathematical expressions of maple to mathematics.
   // input: copy the mathematical expressions of maple
   let lc = $$('input').value;
 
-  ['exp', 'log', 'sinh', 'cosh', 'tanh', 'sin', 'cos', 'tan', 'sqrt', 'abs', 'conjugate'].forEach(func => {
-	lc = convert(lc, ['(', ')'], func + '\\(', f2F);
+  ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 'sin', 'cos', 'tan', 'sqrt', 'abs', 'conjugate'].forEach(func => {
+  	lc = convert(lc, ['(', ')'], func + '\\(', f2F);
   })
   lc = lc.replaceAll('arc', 'Arc');
 
@@ -538,16 +555,23 @@ function convert(c, bracket, func, callback) {
 	}
 	return c;
 }
-
+console.log(1000);
+// ^{ ... } --> ^( ... )
 function power(c, pos, i) {
 	return c.slice(0, pos + 1) + '(' + c.slice(pos + 2, i) + ')' + c.slice(i + 1, c.length);
 }
-
+// sqrt[... ]{ ... } --> ...^(...)
 function sqrt(c, pos, i, m) {
 	let power = m[2] ? parseInt(m[2]) : 2;
 	return c.slice(0, pos-1) + ' (' + c.slice(pos + m[0].length, i) + ')^(1/' + power + ') ' + c.slice(i + 1, c.length);
 }
-
+// sin {...} / [...] --> sin(...)
+function f2f(c, pos, i, m) {
+  let func = m[0].slice(0, -1);
+  console.log( [ func, c ] );
+  return c.slice(0, pos) + func + '(' + c.slice(pos + func.length + 1, i) + ')' + c.slice(i + 1, c.length);
+}
+// sin(...) --> sin[...]
 function f2F(c, pos, i, m) {;
 	let func = m[0].slice(0, -1),
 		func_ = func[0].toUpperCase() + func.slice(1);
