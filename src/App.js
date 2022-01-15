@@ -424,19 +424,12 @@ function latex2maple() {
   // return: maple expression 
   // \left[ eq1, ...\left.\\
   //    \right.		eq2 \right] --> (eq1 + eq2)
-  let lc = $$('input').value.replace(/\\right\. \\\\\n\\left\./g, '');
-  lc = lc.replace(/\\right\. \\\\\n/g, '');
+  let lc = $$('input').value;
+  lc = lc.replace(/\\right\./g, '');
+  lc = lc.replace(/\\left\./g, "");
+  lc = lc.replace(/&/g, " ");
   lc = lc.replace(/\\\\/g, '');
-  let type = '';
-  if (lc.includes('align')) {
-    lc = lc.split(/\n/g).slice(1, -1).map(d => d.split(/&/g).slice(1));
-    type = 'array';
-  } else if (lc.includes('array')) {
-    lc = lc.split(/\n/g).slice(1, -1).map(d => d.split(/&/g));
-    type = 'matrix';
-  } else { // lc of single expression
-    lc = [[lc]]
-  }
+  lc = [[ lc ]];
 
   lc = lc.map(arr => arr.map(c => {
     c = c.replace(/\\(tilde|hat|bar|underline|acute|check){(.*?)}/g, '$2')
@@ -508,17 +501,7 @@ function latex2maple() {
     return c + '          ';
   }))
   
-  if (type === 'matrix') {
-    lc = 'Matrix(' +
-      JSON.stringify(lc).replace(/"/g, '') +
-      ')';
-  } else if (type === 'array') {
-    lc = '[' +
-      JSON.stringify(lc).replace(/(\["|"\])/g, '') +
-      ']';
-  } else {
-    lc = lc[0][0];
-  }
+  lc = lc[0][0];
   $$('input').value += '\r\n\r\n' + lc;
 }
 
