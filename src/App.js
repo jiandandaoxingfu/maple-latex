@@ -91,25 +91,13 @@ const TEXT =
       各次幂系数所得等式
 
     latex2maple:
-      将mathpix-snipping-tool通过图片识别生成的矩阵的latex代码
-      转化成maple中矩阵输入表达式。
-      目前主要支持以下环境：
-        矩阵：如
-          \\begin{array}{cc}
-            u     & 1 \\
-            \\lambda  & v
-          \\end{array}
-        多行：如
-          \\begin{aligned}{cc}
-            &u + 1 \\
-            &\\lambda + v
-          \\end{aligned}
-        单个公式：如
-          x^2 + y^2
+      将mathpix-snipping-tool通过图片识别生成的latex代码
+      转化成maple的表达式。 支持单个公式(可以多行)或者多个公式逗号隔开。 
+
     maple2mma:
       将复制的maple表达式转换为mathematics的表达式。目前支持以下函数：
           exp, log, abs, sqrt, conjugate, Re, Im,
-          sin, cos, tan, sinh, cosh, tanh, 
+          sin, cos, tan, sinh, cosh, tanh, sech, csch, 
     typora:
       读取typora生成的markdown文档并解析。
       目前仅支持标题，数学公式解析。
@@ -118,14 +106,16 @@ const TEXT =
       使用Grammarly网站检查论文(英语)小错误。
       将tex内容中的数学公式等关键信息删除。
 
-    Tex格式化：
-      格式化tex文本。
+    To Do: Tex格式化：
+              格式化tex文本。
 
     
     双击： 左侧收起/恢复，
     
     注：1. 个人用，不具有普适性，不保证完全正确。 
         2. 仅支持latex数学公式，其它命令不支持。
+    欢迎使用， 如出现错误， 希望可以把相应的tex代码和错误描述
+    发送至: jiaminxin@outlook.com.
     `
 var input_value = '';
 var is_show_guide = true;
@@ -812,7 +802,8 @@ export default () => {
     },
     footer: { 
       textAlign: 'center', 
-      height: '4%',
+      height: '30px',
+      minHeight: '30px',
       padding: '3px 0' 
     }, 
     tip: {
@@ -892,9 +883,11 @@ export default () => {
               </Content>
 
               <Footer style={ styles.footer }>
-                Maple-Latex ©2019 Created by JMx <a target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">github</a>&nbsp;&nbsp;
-                  <a target="_blank" href="https://gitee.com/jiandandaoxingfu/maple-latex">gitee</a>
-                  <br />
+                Maple-Latex ©2022 Created by JMx &nbsp;&nbsp; 项目仓库：
+                <a target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">github</a>&nbsp;&nbsp;
+                <a target="_blank" href="https://gitee.com/jiandandaoxingfu/maple-latex">gitee</a>&nbsp;&nbsp;
+                反馈及意见请发送至: jiaminxin@outlook.com
+                <br />
               </Footer>
             </Layout>
 
