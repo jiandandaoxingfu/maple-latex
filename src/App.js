@@ -426,7 +426,7 @@ function latex2maple() {
     c = c.replace(/\\mathrm{([a-zA-Z])}/g, '$1');
     c = c.replace(/\\times/g, " ");
     // \lambda --> lambda
-    c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta)([a-zA-Z])/g, '$1 $2');
+    c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta|rho)([a-zA-Z])/g, '$1 $2');
     // \left( * \right) -->  ( * )
     // \left[ * \right] -->  ( * )
     c = c.replace(/\\left[(\[\]]/g, ' ( ');
@@ -435,7 +435,7 @@ function latex2maple() {
     c = c.replace(/_{n}/g, '(n) ');
     c = c.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
     // w_{x} --> diff(w(x), x); 
-    c = c.replace(/(\w)_{([a-z])}/g, ' diff($1, $2) ');
+    c = c.replace(/(\w)_{([a-z])}/g, ' diff($1, $2) ').replace(/ {2,}/g, " ");
     // ( w - v )_{x}  --> diff( (w - v)(x), x)
     c = c.replace(/\(([a-zA-Z0-9/+\^-\s]+)\)_{([a-z])}/g, ' diff($1, $2) ');
     // w_{12, x..x} --> diff(w12, x$n)   
@@ -455,6 +455,9 @@ function latex2maple() {
       let re = RegExp(`([a-zA-Z0-9]+)\\^{([+-])[+-]{${i}}}`, 'g');
       c = c.replace(re, `shift($1, $2${i+1})`);
     }
+
+    c = c.replace(/\\operatorname{([a-zA-Z]+)}/g, "\\$1 ");
+    c = c.replace(/ {2,}/g, " ");
     // x^{3n + 1} --> x^(3n + 1), 
     c = convert(c, ['{', '}'], '\\^{', power);
     // sqrt[n]{x+y}
@@ -463,7 +466,7 @@ function latex2maple() {
     c = c.replace(/e\^/g, " \\exp ");
     c = c.replace(/\\ln /g, "\\log ");
     ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 'sin', 'cos', 'tan'].forEach(func => {
-      let reg = new RegExp( "\\\\(" + func + ") ([a-zA-Z])", "g");
+      let reg = new RegExp( "\\\\(" + func + ") ([a-zA-Z0-9])", "g");
       c = c.replace(reg, " $1($2)");
       reg = new RegExp( "\\\\(" + func + ") ", "g");
       c = c.replace(reg, " $1");
@@ -487,8 +490,8 @@ function latex2maple() {
     c = c.replace(/{/g, ' ( ').replace(/}/g, ' ) ');
 
     // )( --> ) (
-    c = c.replace(/\)\(/g, ') (');
-    return c + '          ';
+    c = c.replace(/\)\(/g, ') (').replace(/ {2,}/g, " ");
+    return c;
   }))
   
   lc = lc[0][0];
@@ -506,6 +509,10 @@ function maple2mma() {
   	lc = convert(lc, ['(', ')'], func + '\\(', f2F);
   })
   lc = lc.replaceAll('arc', 'Arc');
+
+  // diff -> D
+  lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\)/g, "D[$1, $2]");
+  lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\$(\d+)\)/g, "D[$1, {$2, $3}]");
 
   $$('input').value += '\r\n\r\n' + lc;
 }
