@@ -57,65 +57,67 @@ function $$(id) {
 var islock = false;
 
 // 使用说明
-const TEXT =
-  `
-    功能: 
-      可以实时预览数学公式(先输入数学环境)，创建列表和矩阵
-      处理Maple生成的latex代码等。
+const TEXT =  `可以实时预览数学公式(先输入数学环境)，创建列表和矩阵
+处理Maple生成的latex代码等。
+
+双击： 左侧收起/恢复，
     
-    excel数据转列表：  
+注：
+    1. 个人用，不具有普适性，不保证完全正确。 
+    2. 仅支持latex数学公式，其它命令不支持。
+    
+欢迎使用， 如出现错误， 希望可以把相应的tex代码和错误描述
+发送至: jiaminxin@outlook.com.
+
+excel数据转列表：  
       输入框清空，将excel数据复制到输入框，点击转换按钮
       即可. 要求不同行要换行，数据中无空格, 
       不同数据间有空格(或tab键)隔开.
-    
-    下面maple相关的功能均与方程族推导相关，其余问题未必可用
-    
-    连续公式格式化：
+      
+连续公式格式化：
       格式化maple生成的latex代码，去除冗余
       将latex代码粘贴在输入框，点击格式化即可。
     
-    展示系数格式化：
+展示系数格式化：
       主要针对无穷展开同次幂系数。
     
-    szce格式化：
-      连续静态零曲率方程格式化，并且输出各未知量的依赖关系。
+szce格式化：
+      连续静态零曲率方程格式化，并且输出各未知量
+      的依赖关系。
     
-    离散szce格式化：
-      离散静态零曲率方程格式化，并且输出各未知量的依赖关系。
+离散szce格式化：
+      离散静态零曲率方程格式化，并且输出各未知量
+      的依赖关系。
     
-    DT-gT: 
+DT-gT: 
       指将gauge变换T代入T_x+TU=U_hatT.
     
-    DT-coe:
-      指将gauge变换T代入T_x+TU=U_hatT后比较各式中lambda
-      各次幂系数所得等式
+DT-coe:
+      指将gauge变换T代入T_x+TU=U_hatT后比较各式中
+      lambda各次幂系数所得等式
 
-    latex2maple:
+latex2maple:
       将mathpix-snipping-tool通过图片识别生成的latex代码
-      转化成maple的表达式。 支持单个公式(可以多行)或者多个公式逗号隔开。 
+      转化成maple的表达式。 支持单个公式(可以多行)
+      或者多个公式逗号隔开。 
 
-    maple2mma:
-      将复制的maple表达式转换为mathematics的表达式。目前支持以下函数：
-          exp, log, abs, sqrt, conjugate, Re, Im,
-          sin, cos, tan, sinh, cosh, tanh, sech, csch, 
-    typora:
-      读取typora生成的markdown文档并解析。
-      目前仅支持标题，数学公式解析。
+maple2mma:
+      将复制的maple表达式转换为mathematics的表达式。
+      目前支持以下函数：
+      exp, log, abs, sqrt, conjugate, Re, Im,
+      sin, cos, tan, sinh, cosh, tanh, sech, csch, 
 
-    Grammarly:
+grammarly:
       使用Grammarly网站检查论文(英语)小错误。
       将tex内容中的数学公式等关键信息删除。
 
-    To Do: Tex格式化：
-              格式化tex文本。
+typora:
+      读取typora生成的markdown文档并解析。
+      目前仅支持标题，数学公式解析。
 
-    
-    双击： 左侧收起/恢复，
-    
-    注：1. 个人用，不具有普适性，不保证完全正确。 
-        2. 仅支持latex数学公式，其它命令不支持。
-    欢迎使用， 如出现错误， 希望可以把相应的tex代码和错误描述
-    发送至: jiaminxin@outlook.com.
+To Do: 
+    Tex格式化：
+            格式化tex文本。
     `
 var input_value = '';
 var is_show_guide = true;
@@ -535,7 +537,7 @@ function convert(c, bracket, func, callback) {
 	}
 	return c;
 }
-console.log(1000);
+
 // ^{ ... } --> ^( ... )
 function power(c, pos, i) {
 	return c.slice(0, pos + 1) + '(' + c.slice(pos + 2, i) + ')' + c.slice(i + 1, c.length);
@@ -832,14 +834,14 @@ export default () => {
   var discrete_szce_formula = () =>{ set_input_format_szce("1") };
   var inputOnchange = () => { renderer($$('input'), $$('output')) };
   const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 
-                    'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', 'szce格式化', 
+                    'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', '连续szce格式化', 
                     '离散公式格式化', '离散szce格式化', 'grammarly', 'typora'];
   const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, 
                      DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, 
                      discrete_formula, discrete_szce_formula, grammarly, typora];
-  const btn_type = ["default", "primary", "primary", "primary", "primary", 
-                    "default", "default", "dashed", "dashed", "dashed", 
-                    "danger", "danger", "primary", "primary"];
+  const btn_type = ["danger", "primary", "primary", "default", "default", 
+                    "primary", "primary", "default", "default", "default", 
+                    "primary", "primary", "default", "default"];
   const btn_arr = () => {
     let n = btn_name.length;
     let arr = [];
@@ -890,11 +892,7 @@ export default () => {
               </Content>
 
               <Footer style={ styles.footer }>
-                Maple-Latex ©2022 Created by JMx &nbsp;&nbsp; 项目仓库：
-                <a target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">github</a>&nbsp;&nbsp;
-                <a target="_blank" href="https://gitee.com/jiandandaoxingfu/maple-latex">gitee</a>&nbsp;&nbsp;
-                反馈及意见请发送至: jiaminxin@outlook.com
-                <br />
+                Maple-Latex v2.0.0 ©2022 Created by <a target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">JMx</a>
               </Footer>
             </Layout>
 
