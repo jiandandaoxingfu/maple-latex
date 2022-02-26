@@ -117,7 +117,7 @@ typora:
 
 To Do: 
     Tex格式化：
-            格式化tex文本。
+            格式化tex文本。 目前仅支持断句。
     `
 var input_value = '';
 var is_show_guide = true;
@@ -563,9 +563,9 @@ function f2F(c, pos, i, m) {;
 
 function grammarly() {
   let lc = $$('input').value;
-  lc = lc.replace(/\\cite{.*?}/g, '\\cite{}');
-  lc = lc.replace(/\\eqref{.*?}/g, '\\eqref{}');
-  lc = lc.replace(/\\ref{.*?}/g, '\\ref{}');
+  lc = lc.replace(/\\cite{.*?}/g, '[1]');
+  lc = lc.replace(/\\eqref{.*?}/g, '(2)');
+  lc = lc.replace(/\\ref{.*?}/g, '(3)');
   lc = lc.replace(/\\label{.*?}/g, '');
   lc = lc.replace(/\$.*?\$/g, '$$');
   lc = lc.replace(/\\begin{align\*?}(.|\n)*?\\end{align\*?}/g, '$ $');
@@ -576,17 +576,32 @@ function grammarly() {
   $$('input').value = '\r\n\r\n' + lc;
 }
 
-// function tex_format() {
-//   let lc = $$('input').value;
-//   // a. A --> a. \n A
-//   lc = lc.replace(/([a-z]|\$)\. {0,}([A-Z])/g, "$1.\n$2");
+function tex_format() {
+  let lc = $$('input').value.split('egin{thebibliography}')[0];
+  let bib = $$('input').value.split('egin{thebibliography}')[1];
+  // a. A --> a. \n A
+  lc = lc.replace(/([a-z]|\$|})\. {0,}([A-Z])/g, "$1.\n$2");
+  // a \begin{} --> a \n \begin{}
+  lc = lc.replace(/(.+?)(\\begin\{)/g, '$1\n$2');
+  // a \end --> a \n \end
+  lc = lc.replace(/([^\s]+?)[ \t]*(\\end.*?\})/g, '$1\n$2');
+  // \end a --> \end \n a
+  lc = lc.replace(/(\\end.*?\})[ \t]*([^\s]+)/g, '$1\n$2');
+  // ... \n a --> ... a
+  // lc = lc.replace(/[^}]\s+\n+\s+([a-z])/g, '$1');
+  // a  a
+  lc = lc.replace(/([a-z])\s\s+([a-z])/g, '$1 $2');
+  $$('input').value = lc + 'egin{thebibliography}' + bib.replaceAll('\\bibitem', '\n\\bibitem').replace(/\n{3,}/g, '\n\n');
 
-//   lc = lc.replace(/(.+?)(\\begin\{)/g, '$1\n$2');
-//   lc = lc.replace(/([^\s]+?)[ \t]*(\\end.*?\})/g, '$1\n$2');
-//   lc = lc.replace(/(\\end.*?\})[ \t]*([^\s]+)/g, '$1\n$2');
-//   lc = lc.replace(/(\\begin(\{.*?\}[ \t]*){1,2}(\\label\{.*?\}){0,1})(\w)/g, "$1\n$4");
-//   $$('input').value = lc;
-// }
+  // let doc = lc.split('{document}')[1].split('\\end{document}')[0].slice(0, -5);
+  // let blocks = [];
+  // let doc_ = doc;
+  // let idx = doc_.indexOf('\\begin{.*?}');
+  // while( idx > -1 ) {
+  //   doc_.indexOf
+  // }
+  // $$('input').value = doc;
+}
 
 function typora() {
   // 解析typora文档，支持数学公式
@@ -622,18 +637,6 @@ function typora() {
   }
   reader.readAsText(file);
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 class Table extends React.Component {
     state = {
@@ -835,13 +838,13 @@ export default () => {
   var inputOnchange = () => { renderer($$('input'), $$('output')) };
   const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 
                     'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', '连续szce格式化', 
-                    '离散公式格式化', '离散szce格式化', 'grammarly', 'typora'];
+                    '离散公式格式化', '离散szce格式化', 'grammarly', 'Tex格式化', 'typora'];
   const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, 
                      DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, 
-                     discrete_formula, discrete_szce_formula, grammarly, typora];
+                     discrete_formula, discrete_szce_formula, grammarly, tex_format, typora];
   const btn_type = ["danger", "primary", "primary", "default", "default", 
                     "primary", "primary", "default", "default", "default", 
-                    "primary", "primary", "default", "default"];
+                    "primary", "primary", "default", "default", "default"];
   const btn_arr = () => {
     let n = btn_name.length;
     let arr = [];
