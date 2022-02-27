@@ -1,22 +1,8 @@
 import React from 'react';
 import './App.css';
-import {
-  Button,
-  Layout,
-  Divider,
-  Input,
-  Col,
-  Row,
-  Card,
-  Upload,
-  Switch
-} from 'antd';
-import {
-  UploadOutlined
-} from '@ant-design/icons';
-import {
-  Remarkable
-} from 'remarkable';
+import { Button, Layout, Divider, Input, Col, Row, Card, Upload, Switch, notification } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { Remarkable } from 'remarkable';
 
 const md = new Remarkable({
   html: true, // Enable HTML tags in source
@@ -24,14 +10,17 @@ const md = new Remarkable({
   langPrefix: 'language-', // CSS language prefix for fenced blocks
 });
 
-const {
-  Sider,
-  Header,
-  Content,
-  Footer
-} = Layout;
+const { Sider, Header, Content, Footer } = Layout;
 const InputGroup = Input.Group;
 const ButtonGroup = Button.Group;
+
+const openNotification = (placement) => {
+  notification.info({
+    message: '',
+    description: '已完成',
+    placement
+  });
+};
 
 (function() {
   document.getElementsByTagName('head')[0].innerHTML += `
@@ -49,12 +38,6 @@ const ButtonGroup = Button.Group;
   script.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=default");
   document.getElementsByTagName('head')[0].appendChild(script);
 })();
-
-function $$(id) {
-  return document.getElementById(id);
-}
-
-var islock = false;
 
 // 使用说明
 const TEXT =  `可以实时预览数学公式(先输入数学环境)，创建列表和矩阵
@@ -119,6 +102,12 @@ To Do:
     Tex格式化：
             格式化tex文本。 目前仅支持断句。
     `
+
+function $$(id) {
+  return document.getElementById(id);
+}
+
+var islock = false;
 var input_value = '';
 var is_show_guide = true;
 
@@ -150,7 +139,7 @@ document.body.addEventListener('dblclick', function() {
   is_left_hide = !is_left_hide;
 });
 
-// !!!!!!!!!!!!!!!!!!!!!此处是关键， https://www.jianshu.com/p/20f137e2b8c9
+// !!!!!!!!!!!!!!!!!!!!!此处是关键，防抖， https://www.jianshu.com/p/20f137e2b8c9
 function renderer(source, target) {
   if (islock) return;
   islock = true;
@@ -415,7 +404,7 @@ function latex2maple() {
   // lc: latex code of align/array/$$, created by mathpix-snipping-tool.exe
   // return: maple expression 
   // \left[ eq1, ...\left.\\
-  //    \right.		eq2 \right] --> (eq1 + eq2)
+  //    \right.    eq2 \right] --> (eq1 + eq2)
   let lc = $$('input').value;
   lc = lc.replace(/\\right\./g, '');
   lc = lc.replace(/\\left\./g, "");
@@ -463,7 +452,7 @@ function latex2maple() {
     // x^{3n + 1} --> x^(3n + 1), 
     c = convert(c, ['{', '}'], '\\^{', power);
     // sqrt[n]{x+y}
-	  c = convert(c, ['{', '}'], 'sqrt(\\[(.*?)\\])?{', sqrt);
+    c = convert(c, ['{', '}'], 'sqrt(\\[(.*?)\\])?{', sqrt);
     // sin t --> sin(t)
     c = c.replace(/e\^/g, " \\exp ");
     c = c.replace(/\\ln /g, "\\log ");
@@ -508,7 +497,7 @@ function maple2mma() {
   let lc = $$('input').value;
 
   ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 'sin', 'cos', 'tan', 'sqrt', 'abs', 'conjugate'].forEach(func => {
-  	lc = convert(lc, ['(', ')'], func + '\\(', f2F);
+    lc = convert(lc, ['(', ')'], func + '\\(', f2F);
   })
   lc = lc.replaceAll('arc', 'Arc');
 
@@ -520,32 +509,32 @@ function maple2mma() {
 }
 
 function convert(c, bracket, func, callback) {
-	while (c.match(new RegExp(func))) {
-		let m = c.match(new RegExp(func)),
-		 	pos = m.index,
-			len = m[0].length - 1,
-			num_l = 0,
-			num_r = 0;
-		for (var i = pos + len; i < c.length; i++) {
-			num_l += c[i] === bracket[0] ? 1 : 0;
-			num_r += c[i] === bracket[1] ? 1 : 0;
-			if (num_l === num_r) {
-				c = callback(c, pos, i, m);
-				break
-			}
-		}
-	}
-	return c;
+  while (c.match(new RegExp(func))) {
+    let m = c.match(new RegExp(func)),
+       pos = m.index,
+      len = m[0].length - 1,
+      num_l = 0,
+      num_r = 0;
+    for (var i = pos + len; i < c.length; i++) {
+      num_l += c[i] === bracket[0] ? 1 : 0;
+      num_r += c[i] === bracket[1] ? 1 : 0;
+      if (num_l === num_r) {
+        c = callback(c, pos, i, m);
+        break
+      }
+    }
+  }
+  return c;
 }
 
 // ^{ ... } --> ^( ... )
 function power(c, pos, i) {
-	return c.slice(0, pos + 1) + '(' + c.slice(pos + 2, i) + ')' + c.slice(i + 1, c.length);
+  return c.slice(0, pos + 1) + '(' + c.slice(pos + 2, i) + ')' + c.slice(i + 1, c.length);
 }
 // sqrt[... ]{ ... } --> ...^(...)
 function sqrt(c, pos, i, m) {
-	let power = m[2] ? parseInt(m[2]) : 2;
-	return c.slice(0, pos-1) + ' (' + c.slice(pos + m[0].length, i) + ')^(1/' + power + ') ' + c.slice(i + 1, c.length);
+  let power = m[2] ? parseInt(m[2]) : 2;
+  return c.slice(0, pos-1) + ' (' + c.slice(pos + m[0].length, i) + ')^(1/' + power + ') ' + c.slice(i + 1, c.length);
 }
 // sin {...} / [...] --> sin(...)
 function f2f(c, pos, i, m) {
@@ -555,9 +544,9 @@ function f2f(c, pos, i, m) {
 }
 // sin(...) --> sin[...]
 function f2F(c, pos, i, m) {;
-	let func = m[0].slice(0, -1),
-		func_ = func[0].toUpperCase() + func.slice(1);
-	return c.slice(0, pos) + func_ + '[' + c.slice(pos + func_.length + 1, i) + ']' + c.slice(i + 1, c.length);
+  let func = m[0].slice(0, -1),
+    func_ = func[0].toUpperCase() + func.slice(1);
+  return c.slice(0, pos) + func_ + '[' + c.slice(pos + func_.length + 1, i) + ']' + c.slice(i + 1, c.length);
 }
 
 
@@ -577,31 +566,184 @@ function grammarly() {
 }
 
 function tex_format() {
-  let lc = $$('input').value.split('egin{thebibliography}')[0];
-  let bib = $$('input').value.split('egin{thebibliography}')[1];
+  let lc = $$('input').value.replaceAll('\n', 'AAAAAAAAA');
+  let header = lc.match(/.*?\\begin{document}/);
+  if( header ) {
+    header = header[0].replaceAll('AAAAAAAAA', '\n');
+  } else {
+    header = '';
+  }
+  let doc = lc.match(/\\begin{document}(.*?)\\end{document}/)[1]
+              .replace(/\\begin{thebibliography}.*?\\end{thebibliography}/, '')
+              .replaceAll('AAAAAAAAA', '\n');
+  let bib = lc.match(/\\begin{thebibliography}.*?\\end{document}/)
+  if( bib ) {
+    bib = bib[0].replaceAll('AAAAAAAAA', '\n')
+                .replaceAll('\\bibitem', '\n\\bibitem')
+                .replace(/( *\n){3,}/g, '\n\n');
+  } else {
+    bib = '\\end{document}';
+  }
+  
+  // \command {} => \command{}
+  doc = doc.replace(/(\\[a-z]+)\s+{/g, "$1{");
   // a. A --> a. \n A
-  lc = lc.replace(/([a-z]|\$|})\. {0,}([A-Z])/g, "$1.\n$2");
+  doc = doc.replace(/([a-z]|\$|})\. {0,}([A-Z])/g, "$1.\n$2");
   // a \begin{} --> a \n \begin{}
-  lc = lc.replace(/(.+?)(\\begin\{)/g, '$1\n$2');
-  // a \end --> a \n \end
-  lc = lc.replace(/([^\s]+?)[ \t]*(\\end.*?\})/g, '$1\n$2');
-  // \end a --> \end \n a
-  lc = lc.replace(/(\\end.*?\})[ \t]*([^\s]+)/g, '$1\n$2');
+  doc = doc.replace(/(\\begin{)/g, '\n$1');
+  // \begin{}{}[] a --> \begin{}{}[] \n a
+  doc = doc.replace(/(\\begin{.*?}{\w+}) *([^\n])/g, '$1\n$2');
+  doc = doc.replace(/(\\begin{.*?}\[[^\\]*\]) *([^\n])/g, '$1\n$2');
+  doc = doc.replace(/(\\begin{.*?}) *([^\n{\[])/g, '$1\n$2');
+  doc = doc.replace(/(\\begin{.*?)\n\s*(\\label{.*?})/g, '$1$2');
+  // a \end b --> a \n \end \n b
+  doc = doc.replace(/(\\end{.*?})/g, '\n$1\n');
   // ... \n a --> ... a
-  // lc = lc.replace(/[^}]\s+\n+\s+([a-z])/g, '$1');
+  doc = doc.replace(/( [a-zA-Z]+) *\n *([a-zA-Z]+[ ,\.;]?)/g, '$1 $2');
   // a  a
-  lc = lc.replace(/([a-z])\s\s+([a-z])/g, '$1 $2');
-  $$('input').value = lc + 'egin{thebibliography}' + bib.replaceAll('\\bibitem', '\n\\bibitem').replace(/\n{3,}/g, '\n\n');
+  doc = doc.replace(/ ([a-zA-Z]+)\s\s+([a-zA-Z]+[ ,\.;]?)/g, '$1 $2');
 
-  // let doc = lc.split('{document}')[1].split('\\end{document}')[0].slice(0, -5);
-  // let blocks = [];
-  // let doc_ = doc;
-  // let idx = doc_.indexOf('\\begin{.*?}');
-  // while( idx > -1 ) {
-  //   doc_.indexOf
-  // }
-  // $$('input').value = doc;
+  let block_tree = create_block_tree(doc, ['', ''], 1, 3);
+  console.log( block_tree );
+  doc = recover_from_block_tree(block_tree)
+        .replace(/(\s*\n){3,}/g, '\n\n')
+        .replace(/(\\end{.*?}\n) *\n/g, '$1')
+        .replace(/\s*\n\s*(\n\s*\\end{)/g, '$1')
+        .replace(/\n\s*(\n\s*\\begin{)/g, '$1')
+        .replace(/(\\begin{.*?\n)\s*\n/g, '$1');
+  $$('input').value = header + doc + bib;
+  openNotification('bottomRight');
 }
+
+function get_blocks(lc) {
+  // 找到所有 '\\begin{*}'的索引
+  let lc_ = lc;
+  let begin_index = [];
+  let idx = 0;
+  while( idx > -1 ) {
+    idx = lc_.indexOf('\\begin');
+    if( begin_index.length === 0 ) begin_index[0] = -1;
+    if( idx > -1 ) {
+      begin_index.push( begin_index.slice(-1)[0] + idx + 1 );
+      lc_ = lc_.slice(idx + 1);
+    }
+  }
+  begin_index = begin_index.slice(1);
+  
+  // 找到所有 '\\end{*}'的索引
+  lc_ = lc;
+  let end_index = [0];
+  let mat = lc_.match(/\\end{.*?}/);
+  while( mat !== null ) {
+    end_index.push( end_index.slice(-1)[0] + mat.index + mat[0].length );
+    lc_ = lc_.slice(mat.index + mat[0].length);
+    mat = lc_.match(/\\end{.*?}/);
+  }
+  
+  end_index = end_index.slice(1);
+  
+  // 根据索引找到所有分块索引， 包括子分块， 同时子分块还出现在父分块中
+  function find_block(begin, end, blocks) {
+    if( end.length === 0 ) return;
+  
+    if( begin.slice(-1) < end[0] ) {
+      blocks.push([ begin.slice(-1), end[0] ]);
+      begin = begin.slice(0, -1);
+      end = end.slice(1);
+    } else {
+      for( let i=0; i<begin.length; i++) {
+        if( begin[i] > end[0] ) {
+          blocks.push([ begin[i-1], end[0] ]);
+          begin = [...begin.slice(0, i-1), ...begin.slice(i)];
+          end = end.slice(1);
+          break
+        };
+      }
+    }
+    find_block(begin, end, blocks);
+  }
+  
+  let blocks = [];
+  find_block(begin_index, end_index, blocks);
+  
+  // 将分块索引转换成键值对格式， 自动排序
+  let blocks_ = {};
+  blocks.forEach( b => blocks_[ b[0] ] = b[1] );
+  
+  // 去除子分块。
+  let begin_index_ = [];
+  for( let i=0; i<begin_index.length; i++ ) {
+    begin_index_.push( begin_index[i] );
+    for( var j=i+1; j<begin_index.length; j++) {
+      if( blocks_[ begin_index[j] ] > blocks_[ begin_index[i] ] ) {
+        i = j - 1;
+        break;
+      }
+    }
+  
+    if( j > begin_index.length - 2 ) break;
+  }
+  
+  // 展平分块索引
+  begin_index = begin_index_[0] === 0 ? [] : [0];
+  begin_index_.forEach( i => begin_index.push(i, blocks_[i]) );
+  
+  // 按照索引将文本分块。
+  blocks = [];
+  for( let i=0; i<begin_index.length - 1; i++ ) {
+      blocks.push( lc.slice(begin_index[i], begin_index[i+1]) )
+  }
+  if( begin_index.slice(-1)[0] !== lc.length ) { 
+    blocks.push( lc.slice (begin_index.slice(-1) ) );
+  }
+  return blocks.reduce( (i, j) => i + j ) === lc ? blocks : [];
+}
+
+function create_block_tree(doc, envir, level, max_level) {
+  let lines = doc.split('\n');
+  if( doc.indexOf('\\begin') < 0 || lines.length < 3 ) { // 叶节点
+    return {
+      level: level,
+      envir: ['', ''], 
+      text: doc,
+      child: [],
+      format_text: doc.split('\n')
+                      .map( s => s.replace(/^ */, ' '.repeat( Math.max(0, 3 * (level - 1) ) ) ) )
+                      .reduce( (i, j) => i + '\n' + j )
+    }
+  }
+
+  let isblock = doc.match(/^\\begin/) !== null && doc.match(/\\end{.*?}$/) !== null;
+  if( isblock ) {
+    envir = [ lines[0], lines.slice(-1)[0] ].map( s => s.replace(/^ */, ' '.repeat( Math.max(0, 3 * (level - 1) ) ) ) );
+    doc = lines.slice(1, -1).reduce( (i, j) => i + '\n'+ j );
+  } else {
+    envir = ['', '']
+    doc = lines.reduce( (i, j) => i + '\n'+ j );
+  }
+  return {
+    level: level,
+    envir: envir,
+    text: doc,
+    child: get_blocks(doc).map( doc => create_block_tree(doc, envir, level + isblock, max_level) ),
+    format_text: ''
+  }
+}
+
+function recover_from_block_tree(tree) {
+  if( tree.child.length === 0 ) {
+    return tree.format_text;
+  }
+
+  let text = `
+${tree.envir[0]}
+${tree.child.map( child => recover_from_block_tree(child) ).reduce( (i, j) => i + j )}
+${tree.envir[1]}
+`;
+  // console.log(text);
+  return text;
+}
+
 
 function typora() {
   // 解析typora文档，支持数学公式
