@@ -602,15 +602,18 @@ function tex_format() {
   doc = doc.replace(/( [a-zA-Z]+) *\n *([a-zA-Z]+[ ,\.;]?)/g, '$1 $2');
   // a  a
   doc = doc.replace(/ ([a-zA-Z]+)\s\s+([a-zA-Z]+[ ,\.;]?)/g, '$1 $2');
+  // a \\ b
+  doc = doc.replace(/([a-z].*?\\\\)(.*?[a-z])/g, '$1\n$2');
 
-  let block_tree = create_block_tree(doc, ['', ''], 1, 3);
+  let block_tree = create_block_tree(doc, 1);
   console.log( block_tree );
   doc = recover_from_block_tree(block_tree)
         .replace(/(\s*\n){3,}/g, '\n\n')
         .replace(/(\\end{.*?}\n) *\n/g, '$1')
         .replace(/\s*\n\s*(\n\s*\\end{)/g, '$1')
         .replace(/\n\s*(\n\s*\\begin{)/g, '$1')
-        .replace(/(\\begin{.*?\n)\s*\n/g, '$1');
+        .replace(/(\\begin{.*?\n)\s*\n/g, '$1')
+        .replace(/(\\[a-z]*section{)/g, '\n\n\n$1');
   $$('input').value = header + doc + bib;
   openNotification('bottomRight');
 }
@@ -699,34 +702,32 @@ function get_blocks(lc) {
   return blocks.reduce( (i, j) => i + j ) === lc ? blocks : [];
 }
 
-function create_block_tree(doc, envir, level, max_level) {
-  let lines = doc.split('\n');
+function create_block_tree(doc, level) {
+  let lines = doc.split('\n'),
+      envir = ['', ''],
+      child = [],
+      format_text = '';
   if( doc.indexOf('\\begin') < 0 || lines.length < 3 ) { // 叶节点
-    return {
-      level: level,
-      envir: ['', ''], 
-      text: doc,
-      child: [],
-      format_text: doc.split('\n')
-                      .map( s => s.replace(/^ */, ' '.repeat( Math.max(0, 3 * (level - 1) ) ) ) )
-                      .reduce( (i, j) => i + '\n' + j )
+    format_text = doc.split('\n')
+                     .map( s => s.replace(/^ */, ' '.repeat( 3 * (level - 1) ) ) )
+                     .reduce( (i, j) => i + '\n' + j );
+  } else {
+    let isblock = doc.match(/^\\begin/) !== null && doc.match(/\\end{.*?}$/) !== null;
+    if( isblock ) {
+      envir = [ lines[0], lines.slice(-1)[0] ].map( s => s.replace(/^ */, ' '.repeat( 3 * (level - 1) ) ) );
+      doc = lines.slice(1, -1).reduce( (i, j) => i + '\n'+ j );
+    } else {
+      envir = ['', '']
     }
+    child = get_blocks(doc).map( doc => create_block_tree(doc, level + isblock) );
   }
 
-  let isblock = doc.match(/^\\begin/) !== null && doc.match(/\\end{.*?}$/) !== null;
-  if( isblock ) {
-    envir = [ lines[0], lines.slice(-1)[0] ].map( s => s.replace(/^ */, ' '.repeat( Math.max(0, 3 * (level - 1) ) ) ) );
-    doc = lines.slice(1, -1).reduce( (i, j) => i + '\n'+ j );
-  } else {
-    envir = ['', '']
-    doc = lines.reduce( (i, j) => i + '\n'+ j );
-  }
   return {
     level: level,
     envir: envir,
     text: doc,
-    child: get_blocks(doc).map( doc => create_block_tree(doc, envir, level + isblock, max_level) ),
-    format_text: ''
+    child: child,
+    format_text: format_text
   }
 }
 
@@ -740,7 +741,6 @@ ${tree.envir[0]}
 ${tree.child.map( child => recover_from_block_tree(child) ).reduce( (i, j) => i + j )}
 ${tree.envir[1]}
 `;
-  // console.log(text);
   return text;
 }
 
