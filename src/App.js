@@ -94,14 +94,14 @@ grammarly:
       使用Grammarly网站检查论文(英语)小错误。
       将tex内容中的数学公式等关键信息删除。
 
+Tex格式化：
+      格式化.tex文本。 支持断句(英文句号换行)，缩进。 
+      仅支持英文.tex文档。
+
 typora:
       读取typora生成的markdown文档并解析。
-      目前仅支持标题，数学公式解析。
-
-To Do: 
-    Tex格式化：
-            格式化tex文本。 目前仅支持断句。
-    `
+      目前仅支持标题，数学公式解析。    
+`
 
 function $$(id) {
   return document.getElementById(id);
@@ -487,6 +487,7 @@ function latex2maple() {
   
   lc = lc[0][0];
   $$('input').value += '\r\n\r\n' + lc;
+  openNotification('bottomRight');
 }
 
 
@@ -506,6 +507,7 @@ function maple2mma() {
   lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\$(\d+)\)/g, "D[$1, {$2, $3}]");
 
   $$('input').value += '\r\n\r\n' + lc;
+  openNotification('bottomRight');
 }
 
 function convert(c, bracket, func, callback) {
@@ -549,7 +551,6 @@ function f2F(c, pos, i, m) {;
   return c.slice(0, pos) + func_ + '[' + c.slice(pos + func_.length + 1, i) + ']' + c.slice(i + 1, c.length);
 }
 
-
 function grammarly() {
   let lc = $$('input').value;
   lc = lc.replace(/\\cite{.*?}/g, '[1]');
@@ -563,6 +564,7 @@ function grammarly() {
   lc = lc.replace(/\d{8}/g, '1');
   lc = lc.replace(/(.|\n)*\\begin{abstract}/,'');
   $$('input').value = '\r\n\r\n' + lc;
+  openNotification('bottomRight');
 }
 
 function tex_format() {
@@ -573,9 +575,12 @@ function tex_format() {
   } else {
     header = '';
   }
-  let doc = lc.match(/\\begin{document}(.*?)\\end{document}/)[1]
-              .replace(/\\begin{thebibliography}.*?\\end{thebibliography}/, '')
+
+  let doc = lc.match(/\\begin{document}(.*?)\\end{document}/);
+  if( doc === null ) return;
+  doc = doc[1].replace(/\\begin{thebibliography}.*?\\end{thebibliography}/, '')
               .replaceAll('AAAAAAAAA', '\n');
+  
   let bib = lc.match(/\\begin{thebibliography}.*?\\end{document}/)
   if( bib ) {
     bib = bib[0].replaceAll('AAAAAAAAA', '\n')
@@ -743,7 +748,6 @@ ${tree.envir[1]}
 `;
   return text;
 }
-
 
 function typora() {
   // 解析typora文档，支持数学公式
