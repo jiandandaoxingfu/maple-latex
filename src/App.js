@@ -4,6 +4,8 @@ import { Button, Layout, Divider, Input, Col, Row, Card, Upload, Switch, notific
 import { UploadOutlined } from '@ant-design/icons';
 import { Remarkable } from 'remarkable';
 
+const Diff = require('diff');
+
 const md = new Remarkable({
   html: true, // Enable HTML tags in source
   breaks: false, // Convert '\n' in paragraphs into <br>
@@ -97,6 +99,9 @@ grammarly:
 Tex格式化：
       格式化.tex文本。 支持断句(英文句号换行)，缩进。 
       仅支持英文.tex文档。
+
+文本比较：
+      比较两个文本之间的差异， 并且标注出变动的地方。
 
 typora:
       读取typora生成的markdown文档并解析。
@@ -749,6 +754,40 @@ ${tree.envir[1]}
   return text;
 }
 
+// http://incaseofstairs.com/jsdiff/
+function text_diff() {
+  const one = '', 
+        other = '';
+ 
+  let diff = Diff.diffWords(one, other),
+      display = document.getElementById('output'),
+      fragment = document.createElement('div');
+  fragment.id = 'diff';
+  for (let i=0; i < diff.length; i++) {
+
+    if (diff[i].added && diff[i + 1] && diff[i + 1].removed) {
+      let swap = diff[i];
+      diff[i] = diff[i + 1];
+      diff[i + 1] = swap;
+    }
+
+    let node;
+    if (diff[i].removed) {
+      node = document.createElement('del');
+      node.appendChild(document.createTextNode(diff[i].value));
+    } else if (diff[i].added) {
+      node = document.createElement('ins');
+      node.appendChild(document.createTextNode(diff[i].value));
+    } else {
+      node = document.createTextNode(diff[i].value);
+    }
+    fragment.appendChild(node);
+  }
+
+  display.innerHTML = '';
+  display.appendChild(fragment);
+}
+
 function typora() {
   // 解析typora文档，支持数学公式
   let file = $$('typora-upload').files[0];
@@ -984,13 +1023,13 @@ export default () => {
   var inputOnchange = () => { renderer($$('input'), $$('output')) };
   const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 
                     'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', '连续szce格式化', 
-                    '离散公式格式化', '离散szce格式化', 'grammarly', 'Tex格式化', 'typora'];
+                    '离散公式格式化', '离散szce格式化', 'grammarly', 'Tex格式化', '文本比较', 'typora'];
   const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, 
                      DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, 
-                     discrete_formula, discrete_szce_formula, grammarly, tex_format, typora];
+                     discrete_formula, discrete_szce_formula, grammarly, tex_format, text_diff, typora];
   const btn_type = ["danger", "primary", "primary", "default", "default", 
                     "primary", "primary", "default", "default", "default", 
-                    "primary", "primary", "default", "default", "default"];
+                    "primary", "primary", "default", "default", "default", "default"];
   const btn_arr = () => {
     let n = btn_name.length;
     let arr = [];
