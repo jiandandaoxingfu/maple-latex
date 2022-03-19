@@ -592,8 +592,10 @@ function tex_format() {
   
   // \command {} => \command{}
   doc = doc.replace(/(\\[a-z]+)\s+{/g, "$1{");
-  // a. A --> a. \n A
+  // a. A --> a. \n A,      
   doc = doc.replace(/([a-z]|\$|})\. {0,}([A-Z])/g, "$1.\n$2");
+  // 你[.。] 我--> 你[.。] \n 我
+  doc = doc.replace(/([\u4e00-\u9fa5]|\$|})([\.。]) {0,}([\u4e00-\u9fa5])/g, "$1$2\n$3");
   // a \begin{} --> a \n \begin{}
   doc = doc.replace(/(\\begin{)/g, '\n$1');
   // \begin{}{}[] a --> \begin{}{}[] \n a
@@ -618,7 +620,9 @@ function tex_format() {
         .replace(/\s*\n\s*(\n\s*\\end{)/g, '$1')
         .replace(/\n\s*(\n\s*\\begin{)/g, '$1')
         .replace(/(\\begin{.*?\n)\s*\n/g, '$1')
-        .replace(/(\\[a-z]*section{)/g, '\n\n\n$1');
+        .replace(/(\\chapter{)/g, '\n\n\n$1')
+        .replace(/(\\[a-z]*section{)/g, '\n\n\n$1')
+        .replace(/(\\end{frame})/g, '$1\n\n\n')
   $$('input').value = header + doc + bib;
   openNotification('bottomRight');
 }
