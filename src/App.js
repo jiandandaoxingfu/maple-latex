@@ -95,9 +95,8 @@ grammarly:
       将tex内容中的数学公式等关键信息删除。
 
 Tex格式化：
-      格式化.tex文本。 支持断句(英文句号换行)，缩进。 
-      仅支持英文.tex文档。
-
+      格式化.tex文本。 支持断句，缩进。 
+      
 typora:
       读取typora生成的markdown文档并解析。
       目前仅支持标题，数学公式解析。    
@@ -568,7 +567,12 @@ function grammarly() {
 }
 
 function tex_format() {
-  let lc = $$('input').value.replaceAll('\n', 'AAAAAAAAA');
+  let lc = $$('input').value.replace(/\n\t/g, '\n');
+  // 保留注释原格式
+  let descriptions = lc.match(/ *%.*?\n/g);
+  lc = lc.replace(/[ \t]*%.*?\n/g, '_DESCRIPTION_\n')
+         .replace(/\n/g, 'AAAAAAAAA')
+         .replace(/\t/g, '    ');
   let header = lc.match(/.*?\\begin{document}/);
   if( header ) {
     header = header[0].replaceAll('AAAAAAAAA', '\n');
@@ -577,17 +581,21 @@ function tex_format() {
   }
 
   let doc = lc.match(/\\begin{document}(.*?)\\end{document}/);
-  if( doc === null ) return;
-  doc = doc[1].replace(/\\begin{thebibliography}.*?\\end{thebibliography}/, '')
-              .replaceAll('AAAAAAAAA', '\n');
+  let isDoc = doc !== null;
+  if( !isDoc ) {
+    doc = lc.replaceAll('AAAAAAAAA', '\n');
+  } else {
+    doc = doc[1].replace(/\\begin{thebibliography}.*?\\end{thebibliography}/, '')
+                .replaceAll('AAAAAAAAA', '\n');
+  }
   
-  let bib = lc.match(/\\begin{thebibliography}.*?\\end{document}/)
+  let bib = lc.match(/\\begin{thebibliography}.*?\\end{thebibliography}/)
   if( bib ) {
     bib = bib[0].replaceAll('AAAAAAAAA', '\n')
                 .replaceAll('\\bibitem', '\n\\bibitem')
                 .replace(/( *\n){3,}/g, '\n\n');
   } else {
-    bib = '\\end{document}';
+    bib = '';
   }
   
   // \command {} => \command{}
@@ -608,7 +616,7 @@ function tex_format() {
   // ... \n a --> ... a
   doc = doc.replace(/( [a-zA-Z]+) *\n *([a-zA-Z]+[ ,\.;]?)/g, '$1 $2');
   // a  a
-  doc = doc.replace(/ ([a-zA-Z]+)\s\s+([a-zA-Z]+[ ,\.;]?)/g, '$1 $2');
+  doc = doc.replace(/ ([a-zA-Z]+)\s\s+([a-zA-Z]+[ ,\.;]?)/g, ' $1 $2');
   // a \\ b
   doc = doc.replace(/([a-z].*?\\\\)(.*?[a-z])/g, '$1\n$2');
 
@@ -623,7 +631,14 @@ function tex_format() {
         .replace(/(\\chapter{)/g, '\n\n\n$1')
         .replace(/(\\[a-z]*section{)/g, '\n\n\n$1')
         .replace(/(\\end{frame})/g, '$1\n\n\n')
-  $$('input').value = header + doc + bib;
+  lc = header + doc + bib + (isDoc ? '\n\\end{document}' : '');
+  if( descriptions !== null ) {
+    for( let i=0; i<descriptions.length; i++) {
+      lc = lc.replace('_DESCRIPTION_', descriptions[i].slice(0, -1));
+    }
+  }
+
+  $$('input').value = lc;
   openNotification('bottomRight');
 }
 
@@ -659,7 +674,7 @@ function get_blocks(lc) {
     if( end.length === 0 ) return;
   
     if( begin.slice(-1) < end[0] ) {
-      blocks.push([ begin.slice(-1), end[0] ]);
+      blocks.push([ begin.slice(-1)[0], end[0] ]);
       begin = begin.slice(0, -1);
       end = end.slice(1);
     } else {
@@ -687,13 +702,12 @@ function get_blocks(lc) {
   for( let i=0; i<begin_index.length; i++ ) {
     begin_index_.push( begin_index[i] );
     for( var j=i+1; j<begin_index.length; j++) {
-      if( blocks_[ begin_index[j] ] > blocks_[ begin_index[i] ] ) {
+      if( begin_index[j] > blocks_[ begin_index[i] ] ) { // 非子分块
         i = j - 1;
         break;
       }
     }
-  
-    if( j > begin_index.length - 2 ) break;
+    if( j > begin_index.length - 1 ) break;
   }
   
   // 展平分块索引
@@ -705,8 +719,9 @@ function get_blocks(lc) {
   for( let i=0; i<begin_index.length - 1; i++ ) {
       blocks.push( lc.slice(begin_index[i], begin_index[i+1]) )
   }
-  if( begin_index.slice(-1)[0] !== lc.length ) { 
-    blocks.push( lc.slice (begin_index.slice(-1) ) );
+  let last_index = begin_index.pop();
+  if( last_index !== lc.length ) { 
+    blocks.push( lc.slice( last_index ) );
   }
   return blocks.reduce( (i, j) => i + j ) === lc ? blocks : [];
 }
@@ -734,7 +749,6 @@ function create_block_tree(doc, level) {
   return {
     level: level,
     envir: envir,
-    text: doc,
     child: child,
     format_text: format_text
   }
