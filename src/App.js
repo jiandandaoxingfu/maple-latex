@@ -14,10 +14,10 @@ const { Sider, Header, Content, Footer } = Layout;
 const InputGroup = Input.Group;
 const ButtonGroup = Button.Group;
 
-const openNotification = (placement) => {
+const openNotification = (placement, info) => {
   notification.info({
     message: '',
-    description: '已完成',
+    description: info,
     placement
   });
 };
@@ -96,6 +96,7 @@ grammarly:
 
 Tex格式化：
       格式化.tex文本。 支持断句，缩进。 
+      (目前存在的bug: 以某一环境结束的段落会与下一个段落合并.)
       
 typora:
       读取typora生成的markdown文档并解析。
@@ -486,7 +487,7 @@ function latex2maple() {
   
   lc = lc[0][0];
   $$('input').value += '\r\n\r\n' + lc;
-  openNotification('bottomRight');
+  openNotification('bottomRight', '已完成');
 }
 
 
@@ -506,7 +507,7 @@ function maple2mma() {
   lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\$(\d+)\)/g, "D[$1, {$2, $3}]");
 
   $$('input').value += '\r\n\r\n' + lc;
-  openNotification('bottomRight');
+  openNotification('bottomRight', '已完成');
 }
 
 function convert(c, bracket, func, callback) {
@@ -563,7 +564,7 @@ function grammarly() {
   lc = lc.replace(/\d{8}/g, '1');
   lc = lc.replace(/(.|\n)*\\begin{abstract}/,'');
   $$('input').value = '\r\n\r\n' + lc;
-  openNotification('bottomRight');
+  openNotification('bottomRight', '已完成');
 }
 
 function tex_format() {
@@ -573,6 +574,7 @@ function tex_format() {
   lc = lc.replace(/[ \t]*%.*?\n/g, '_DESCRIPTION_\n')
          .replace(/\n/g, 'AAAAAAAAA')
          .replace(/\t/g, '    ');
+
   let header = lc.match(/.*?\\begin{document}/);
   if( header ) {
     header = header[0].replaceAll('AAAAAAAAA', '\n');
@@ -620,7 +622,15 @@ function tex_format() {
   // a \\ b
   doc = doc.replace(/([a-z].*?\\\\)(.*?[a-z])/g, '$1\n$2');
 
+  let bm = doc.match(/\\begin{/g) || [], 
+      em = doc.match(/\\end{/g) || [];
+  if( bm.length !== em.length ) {
+    openNotification('bottomRight', '\\begin{}与\\end{}个数不等, 无法处理');
+    return
+  }
+
   let block_tree = create_block_tree(doc, 1);
+  window.block_tree = block_tree;
   console.log( block_tree );
   doc = recover_from_block_tree(block_tree)
         .replace(/(\s*\n){3,}/g, '\n\n')
@@ -639,90 +649,35 @@ function tex_format() {
   }
 
   $$('input').value = lc;
-  openNotification('bottomRight');
+  openNotification('bottomRight', '已完成');
 }
 
 function get_blocks(lc) {
-  // 找到所有 '\\begin{*}'的索引
   let lc_ = lc;
-  let begin_index = [];
-  let idx = 0;
-  while( idx > -1 ) {
-    idx = lc_.indexOf('\\begin');
-    if( begin_index.length === 0 ) begin_index[0] = -1;
-    if( idx > -1 ) {
-      begin_index.push( begin_index.slice(-1)[0] + idx + 1 );
-      lc_ = lc_.slice(idx + 1);
-    }
-  }
-  begin_index = begin_index.slice(1);
-  
-  // 找到所有 '\\end{*}'的索引
-  lc_ = lc;
-  let end_index = [0];
-  let mat = lc_.match(/\\end{.*?}/);
-  while( mat !== null ) {
-    end_index.push( end_index.slice(-1)[0] + mat.index + mat[0].length );
-    lc_ = lc_.slice(mat.index + mat[0].length);
-    mat = lc_.match(/\\end{.*?}/);
-  }
-  
-  end_index = end_index.slice(1);
-  
-  // 根据索引找到所有分块索引， 包括子分块， 同时子分块还出现在父分块中
-  function find_block(begin, end, blocks) {
-    if( end.length === 0 ) return;
-  
-    if( begin.slice(-1) < end[0] ) {
-      blocks.push([ begin.slice(-1)[0], end[0] ]);
-      begin = begin.slice(0, -1);
-      end = end.slice(1);
-    } else {
-      for( let i=0; i<begin.length; i++) {
-        if( begin[i] > end[0] ) {
-          blocks.push([ begin[i-1], end[0] ]);
-          begin = [...begin.slice(0, i-1), ...begin.slice(i)];
-          end = end.slice(1);
-          break
-        };
-      }
-    }
-    find_block(begin, end, blocks);
-  }
-  
+  let begin_match = lc_.match(/\\begin{(.*?)}/);
   let blocks = [];
-  find_block(begin_index, end_index, blocks);
-  
-  // 将分块索引转换成键值对格式， 自动排序
-  let blocks_ = {};
-  blocks.forEach( b => blocks_[ b[0] ] = b[1] );
-  
-  // 去除子分块。
-  let begin_index_ = [];
-  for( let i=0; i<begin_index.length; i++ ) {
-    begin_index_.push( begin_index[i] );
-    for( var j=i+1; j<begin_index.length; j++) {
-      if( begin_index[j] > blocks_[ begin_index[i] ] ) { // 非子分块
-        i = j - 1;
-        break;
-      }
+  while( begin_match ) {
+    let begin_index = begin_match.index;
+    let envir = begin_match[1];
+    let end = `\\end{${envir}}`;
+    let end_index = lc_.indexOf(end) + end.length;
+    let sub_lc = lc_.slice(begin_index, end_index);
+    let bm = sub_lc.match(/\\begin{/g) || [], 
+        em = sub_lc.match(/\\end{/g) || [];
+    while( bm.length !== em.length ) { // 同一环境的嵌套, 如 array 环境
+      end_index = lc_.slice(end_index).indexOf(end) + end.length + end_index;
+      sub_lc = lc_.slice(begin_index, end_index);
+      bm = sub_lc.match(/\\begin{/g) || [];
+      em = sub_lc.match(/\\end{/g) || [];
     }
-    if( j > begin_index.length - 1 ) break;
+    blocks.push( lc_.slice(0, begin_index) );
+    blocks.push( lc_.slice(begin_index, end_index) );
+    lc_ = lc_.slice(end_index);
+    begin_match = lc_.match(/\\begin{(.*?)}/);
   }
   
-  // 展平分块索引
-  begin_index = begin_index_[0] === 0 ? [] : [0];
-  begin_index_.forEach( i => begin_index.push(i, blocks_[i]) );
-  
-  // 按照索引将文本分块。
-  blocks = [];
-  for( let i=0; i<begin_index.length - 1; i++ ) {
-      blocks.push( lc.slice(begin_index[i], begin_index[i+1]) )
-  }
-  let last_index = begin_index.pop();
-  if( last_index !== lc.length ) { 
-    blocks.push( lc.slice( last_index ) );
-  }
+  if( lc_.length > 0 ) blocks.push(lc_);
+
   return blocks.reduce( (i, j) => i + j ) === lc ? blocks : [];
 }
 
