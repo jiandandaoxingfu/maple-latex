@@ -1063,6 +1063,7 @@ export default () => {
             </Sider>
         </Layout>
         
+        <Table />
         <div id='buffer' style={{ display: 'none' }}></div>
         <div id='tip' style={ styles.tip }></div>
         <div id='timeline' style={ styles.timeline } onClick={ () => { $$('timeline').style.zIndex = -3; $$('timeline').style.display = 'none'; } } >
