@@ -42,3 +42,7 @@
 .ant-upload-list {
   display: none;
 }
+
+#timeline p {
+  width: 600px;
+}

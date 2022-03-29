@@ -1,6 +1,7 @@
 import React from 'react';
+import { useState } from 'react'; 
 import './App.css';
-import { Button, Layout, Divider, Input, Col, Row, Card, Upload, Switch, notification } from 'antd';
+import { Button, Layout, Divider, Input, Col, Row, Card, Upload, Switch, notification, Timeline } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { Remarkable } from 'remarkable';
 
@@ -107,6 +108,7 @@ function $$(id) {
   return document.getElementById(id);
 }
 
+var isfetch = false;
 var islock = false;
 var input_value = '';
 var is_show_guide = true;
@@ -657,13 +659,13 @@ function get_blocks(lc) {
   let begin_match = lc_.match(/\\begin{(.*?)}/);
   let blocks = [];
   while( begin_match ) {
-    let begin_index = begin_match.index;
-    let envir = begin_match[1];
-    let end = `\\end{${envir}}`;
-    let end_index = lc_.indexOf(end) + end.length;
-    let sub_lc = lc_.slice(begin_index, end_index);
-    let bm = sub_lc.match(/\\begin{/g) || [], 
-        em = sub_lc.match(/\\end{/g) || [];
+    let begin_index = begin_match.index,
+        envir = begin_match[1],
+        end = `\\end{${envir}}`,
+        end_index = 0,
+        sub_lc = '',
+        bm = [],
+        em = [1];
     while( bm.length !== em.length ) { // 同一环境的嵌套, 如 array 环境
       end_index = lc_.slice(end_index).indexOf(end) + end.length + end_index;
       sub_lc = lc_.slice(begin_index, end_index);
@@ -947,21 +949,55 @@ export default () => {
       textAlign: 'center',
       zIndex: '2',
       display: 'none'
+    },
+    timeline: {
+      position: 'absolute',
+      top: '0px',
+      right: '20%',
+      padding: '30px',
+      width: '100%',
+      textAlign: 'left',
+      zIndex: '-3',
+      backgroundColor: 'white',
     }
   }
-  var continuous_formula = () =>{ set_input_format_latex("0", "0") };
-  var discrete_formula = () =>{ set_input_format_latex("0", "1") };
-  var coeff_formula = () =>{ set_input_format_latex("1", "0") };
-  var continuous_szce_formula = () =>{ set_input_format_szce("0") };
-  var discrete_szce_formula = () =>{ set_input_format_szce("1") };
-  var inputOnchange = () => { renderer($$('input'), $$('output')) };
-  const btn_name = ['使用说明', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 
+
+  const continuous_formula = () =>{ set_input_format_latex("0", "0") };
+  const discrete_formula = () =>{ set_input_format_latex("0", "1") };
+  const coeff_formula = () =>{ set_input_format_latex("1", "0") };
+  const continuous_szce_formula = () =>{ set_input_format_szce("0") };
+  const discrete_szce_formula = () =>{ set_input_format_szce("1") };
+  const inputOnchange = () => { renderer($$('input'), $$('output')) };
+  const [commit_history, setCommit_history] = useState([]);
+  const timeline = () => {
+    $$('timeline').style.zIndex = 3;
+    $$('timeline').style.display = 'block';
+    if( isfetch ) return;
+    isfetch = true;
+    fetch('https://api.github.com/repos/jiandandaoxingfu/maple-latex/commits')
+      .then( x => x.json() )
+      .then( x => {
+        let commit_history = x.map( commit => {
+              let date = new Date(commit.commit.author.date);
+              date = date.toJSON().split('T')[0] + ' ' + date.toTimeString().split('G')[0];
+              return { 
+                date: date,
+                msg: commit.commit.message.replace(/\n+/g, '\n').split('\n') 
+              };
+            })
+            .filter( commit => ( commit.msg[0].indexOf('Merge') + commit.msg[0].indexOf('Bump') ) < -1 );
+        setCommit_history(commit_history);
+        console.log(commit_history);
+      })
+      .catch( e => isfetch = false )
+  }
+  const btn_name = ['使用说明', '时间轴', '创建矩阵', 'Excel转列表', 'latex2maple', 'maple2mma', 
                     'DT-gT', 'DT-coe', '连续公式格式化', '展式系数格式化', '连续szce格式化', 
                     '离散公式格式化', '离散szce格式化', 'grammarly', 'Tex格式化', 'typora'];
-  const btn_click = [show_guide, show_table, excel2table, latex2maple, maple2mma, 
+  const btn_click = [show_guide, timeline, show_table, excel2table, latex2maple, maple2mma, 
                      DT_gauge, DT_coe, continuous_formula, coeff_formula, continuous_szce_formula, 
                      discrete_formula, discrete_szce_formula, grammarly, tex_format, typora];
-  const btn_type = ["danger", "primary", "primary", "default", "default", 
+  const btn_type = ["danger", "danger", "primary", "primary", "default", "default", 
                     "primary", "primary", "default", "default", "default", 
                     "primary", "primary", "default", "default", "default"];
   const btn_arr = () => {
@@ -1013,7 +1049,7 @@ export default () => {
             </textarea>
               </Content>
 
-              <Footer style={ styles.footer }>
+              <Footer style={ styles.footer }>  
                 Maple-Latex v2.5 ©2022 Created by <a target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">JMx</a>
                 &nbsp;&nbsp;
                 <a target="_blank" href="https://jiandandaoxingfu.github.io/myblog/post/maple-latex/">Document</a>
@@ -1023,13 +1059,26 @@ export default () => {
             <Divider dashed style={{ margin: '0 2px' }} type='vertical' />
 
             <Sider id='sider' width='50%' style={{ height: document.documentElement.clientHeight + 'px' }}>
-          <div id='output' style={ styles.output }></div>
+              <div id='output' style={ styles.output }></div>
             </Sider>
         </Layout>
         
         <div id='buffer' style={{ display: 'none' }}></div>
         <div id='tip' style={ styles.tip }></div>
-        <Table />
+        <div id='timeline' style={ styles.timeline } onClick={ () => { $$('timeline').style.zIndex = -3; $$('timeline').style.display = 'none'; } } >
+          <Timeline mode="left">
+            { 
+              commit_history.map( commit => 
+                <Timeline.Item label={ commit.date }>
+                  <p><h2>{ commit.msg[0] }</h2></p>
+                  {   
+                    commit.msg.slice(1).map( desc => <p> { desc } </p>)
+                  }
+                </Timeline.Item>
+              )
+            }
+          </Timeline>
+        </div>
       </div>
     );
 }
