@@ -422,8 +422,10 @@ function latex2maple() {
     c = c.replace(/\\(lambda|zeta|eta|xi|gamma|alpha|beta|delta|rho)([a-zA-Z])/g, '$1 $2');
     // \left( * \right) -->  ( * )
     // \left[ * \right] -->  ( * )
+    // \left| * |\right --> (abs())
     c = c.replace(/\\left[(\[\]]/g, ' ( ');
     c = c.replace(/\\right[\)\]]/g, ' ) ');
+    c = c.replace(/\\left\|(.*?)\\right\|/g, '(abs($1))');
     // v_{n-1} --> v(n-1)
     c = c.replace(/_{n}/g, '(n) ');
     c = c.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
@@ -458,7 +460,7 @@ function latex2maple() {
     // sin t --> sin(t)
     c = c.replace(/e\^/g, " \\exp ");
     c = c.replace(/\\ln /g, "\\log ");
-    ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 'sin', 'cos', 'tan'].forEach(func => {
+    ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 'sin', 'cos', 'tan', 'arccos', 'arcsin', 'arctan', 'arccot'].forEach(func => {
       let reg = new RegExp( "\\\\(" + func + ") ([a-zA-Z0-9])", "g");
       c = c.replace(reg, " $1($2)");
       reg = new RegExp( "\\\\(" + func + ") ", "g");
@@ -956,6 +958,7 @@ export default () => {
       right: '20%',
       padding: '30px',
       width: '100%',
+      minHeight: '100%',
       textAlign: 'left',
       zIndex: '-3',
       backgroundColor: 'white',
