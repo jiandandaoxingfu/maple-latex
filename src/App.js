@@ -500,6 +500,8 @@ function maple2mma() {
   // convert mathematical expressions of maple to mathematics.
   // input: copy the mathematical expressions of maple
   let lc = $$('input').value;
+  // ln(...) --> log(...)
+  lc = lc.replace(/ln(\(|\])/g, 'log$1');
   // operatorname(...) --> Operatorname[...]
   ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 
     'sin', 'cos', 'tan', 'sqrt', 'abs', 'conjugate',
