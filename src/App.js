@@ -500,15 +500,18 @@ function maple2mma() {
   // convert mathematical expressions of maple to mathematics.
   // input: copy the mathematical expressions of maple
   let lc = $$('input').value;
-
-  ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 'sin', 'cos', 'tan', 'sqrt', 'abs', 'conjugate'].forEach(func => {
+  // operatorname(...) --> Operatorname[...]
+  ['exp', 'log', 'sinh', 'cosh', 'sech', 'csch', 'coth', 'tanh', 
+    'sin', 'cos', 'tan', 'sqrt', 'abs', 'conjugate',
+  ].forEach(func => {
     lc = convert(lc, ['(', ')'], func + '\\(', f2F);
   })
   lc = lc.replaceAll('arc', 'Arc');
-
   // diff -> D
   lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\)/g, "D[$1, $2]");
   lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\$(\d+)\)/g, "D[$1, {$2, $3}]");
+  // (x, ...) --> [x, ...]
+  lc = lc.replace(/([a-z_\d])\(([a-z].*?)\)/g, '$1[$2]');
 
   $$('input').value += '\r\n\r\n' + lc;
   openNotification('bottomRight', '已完成');
