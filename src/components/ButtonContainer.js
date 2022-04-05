@@ -33,7 +33,7 @@ const btn_type = ["danger", "danger", "primary", "primary", "default", "default"
                     "primary", "primary", "default", "default", "default", 
                     "primary", "primary", "default", "default", "default"];
 
-function ButtonTool() {
+function ButtonContainer() {
   const btn_arr = () => {
     let n = btn_name.length;
     let arr = [];
@@ -75,4 +75,4 @@ function ButtonTool() {
   )
 }
 
-export default ButtonTool;
+export default ButtonContainer;

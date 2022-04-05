@@ -58,7 +58,7 @@ export const styles = {
     top: '0px',
     right: '20%',
     padding: '30px',
-    width: '100%',
+    width: '80%',
     minHeight: '100%',
     textAlign: 'left',
     zIndex: '-3',
