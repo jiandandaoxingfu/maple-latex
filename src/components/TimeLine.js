@@ -7,23 +7,28 @@ var isfetch = false;
 function TimeLine() {
   const [commit_history, setCommit_history] = useState([]);
 
-  const get_commit_history = () => {
-    fetch('https://api.github.com/repos/jiandandaoxingfu/maple-latex/commits')
-      .then( x => x.json() )
-      .then( x => {
-        let commit_history = x.map( commit => {
-              let date = new Date(commit.commit.author.date);
-              date = date.toJSON().split('T')[0] + ' ' + date.toTimeString().split('G')[0];
-              return { 
-                date: date,
-                msg: commit.commit.message.replace(/\n+/g, '\n').split('\n') 
-              };
-            })
-            .filter( commit => ( commit.msg[0].indexOf('Merge') + commit.msg[0].indexOf('Bump') ) < -1 );
-        setCommit_history(commit_history);
-        console.log(commit_history);
-      })
-      .catch( e => isfetch = false )
+  const get_commit_history = async () => {
+    let commit_history_ = [];
+    for( let i=1; i<4; i++ ) {
+      commit_history_.push(...await fetch(`https://api.github.com/repos/jiandandaoxingfu/maple-latex/commits?page=${i}`)
+        .then( x => x.json() )
+        .then( x => {
+          let commit_history_ = x.map( commit => {
+                let date = new Date(commit.commit.author.date);
+                date = date.toJSON().split('T')[0] + ' ' + date.toTimeString().split('G')[0];
+                return { 
+                  date: date,
+                  msg: commit.commit.message.replace(/\n+/g, '\n').split('\n') 
+                };
+              })
+              .filter( commit => ( commit.msg[0].indexOf('Merge') + commit.msg[0].indexOf('Bump') ) < -1 );
+          return commit_history_
+        })
+        .catch( e => isfetch = false )
+      )
+    }
+    console.log(commit_history_);
+    setCommit_history(commit_history_);
   }
   
   return (
