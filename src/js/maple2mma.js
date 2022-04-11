@@ -2,10 +2,10 @@ import { match_bracket } from '../utils/match_bracket';
 import { Notification } from '../utils/Notification';
 
 // sin(...) --> sin[...]
-function f2F(c, pos, i, m) {;
+function f2F(c, start, end, m) {;
   let func = m[0].slice(0, -1),
     func_ = func[0].toUpperCase() + func.slice(1);
-  return c.slice(0, pos) + func_ + '[' + c.slice(pos + func_.length + 1, i) + ']' + c.slice(i + 1, c.length);
+  return c.slice(0, start) + func_ + '[' + c.slice(start + func_.length + 1, end) + ']' + c.slice(end + 1, c.length);
 }
 
 export function maple2mma() {

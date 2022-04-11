@@ -2,19 +2,22 @@ import { match_bracket } from '../utils/match_bracket';
 import { Notification } from '../utils/Notification';
 
 // ^{ ... } --> ^( ... )
-function power(c, pos, i) {
-  return c.slice(0, pos + 1) + '(' + c.slice(pos + 2, i) + ')' + c.slice(i + 1, c.length);
+function power(c, start, end) {
+  return c.slice(0, start + 1) + '(' + c.slice(start + 2, end) + ')' + c.slice(end + 1, c.length);
 }
 // sqrt[... ]{ ... } --> ...^(...)
-function sqrt(c, pos, i, m) {
+function sqrt(c, start, end, m) {
   let power = m[2] ? parseInt(m[2]) : 2;
-  return c.slice(0, pos-1) + ' (' + c.slice(pos + m[0].length, i) + ')^(1/' + power + ') ' + c.slice(i + 1, c.length);
+  return c.slice(0, start-1) + ' (' + c.slice(start + m[0].length, end) + ')^(1/' + power + ') ' + c.slice(end + 1, c.length);
 }
 // sin {...} / [...] --> sin(...)
-function f2f(c, pos, i, m) {
+function f2f(c, start, end, m) {
   let func = m[0].slice(0, -1);
-  console.log( [ func, c ] );
-  return c.slice(0, pos) + func + '(' + c.slice(pos + func.length + 1, i) + ')' + c.slice(i + 1, c.length);
+  return c.slice(0, start) + func + '(' + c.slice(start + func.length + 1, end) + ')' + c.slice(end + 1, c.length);
+}
+
+function frac(c, start, end) {
+  return c.slice(0, start) + '(' + c.slice(start + 6, end) + ')/' + c.slice(end + 1, c.length);
 }
 
 export function latex2maple() {
@@ -24,7 +27,7 @@ export function latex2maple() {
   //    \right.    eq2 \right] --> (eq1 + eq2)
   let lc = document.getElementById('input').value;
   lc = lc.replace(/\\right\./g, '');
-  lc = lc.replace(/\\left\./g, "");
+  lc = lc.replace(/\\left\./g, '');
   lc = lc.replace(/&/g, " ");
   lc = lc.replace(/\\\\/g, '');
   lc = [[ lc ]];
@@ -38,23 +41,25 @@ export function latex2maple() {
     // \left( * \right) -->  ( * )
     // \left[ * \right] -->  ( * )
     // \left| * |\right --> (abs())
-    c = c.replace(/\\left[(\[\]]/g, ' ( ');
-    c = c.replace(/\\right[\)\]]/g, ' ) ');
+    c = c.replace(/\\left(\(|\[|\\{)/g, ' ( ');
+    c = c.replace(/\\right(\)|\]|\\})/g, ' ) ');
     c = c.replace(/\\left\|(.*?)\\right\|/g, '(abs($1))');
+    // \frac{expr1}{expr2} --> 2a/2b
+    c = match_bracket(c, ['{', '}'], '\\\\frac{', frac);
     // v_{n-1} --> v(n-1)
     c = c.replace(/_{n}/g, '(n) ');
     c = c.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
     // w_{x} --> diff(w(x), x); 
-    c = c.replace(/(\w)_{([a-z])}/g, ' diff($1, $2) ').replace(/ {2,}/g, " ");
+    c = c.replace(/(\w) *_{([a-z])}/g, ' diff($1, $2) ').replace(/ {2,}/g, " ");
     // ( w - v )_{x}  --> diff( (w - v)(x), x)
-    c = c.replace(/\(([a-zA-Z0-9/+\^-\s]+)\)_{([a-z])}/g, ' diff($1, $2) ');
+    c = c.replace(/\(([a-zA-Z0-9/+\^-\s}{]+)\) *_{([a-z])}/g, ' diff($1, $2) ');
     // w_{12, x..x} --> diff(w12, x$n)   
     // w_{x..x}  --> diff(w, x$n),  
     // ( w - v )_{x..x}  --> diff( (w - v), x$n), 
     for (let i = 1; i <= 12; i++) {
       let re1 = RegExp(`(\\w)_{(\\d+),(\\s\\w){${i}}}`, 'g'),
         re2 = RegExp(`(\\w)_{(\\w)(\\s\\w){${i}}}`, 'g'),
-        re3 = RegExp(`\\(([a-zA-Z0-9/+\\^-\\s]+)\\)_{(\\w)(\\s\\w){${i}}}`);
+        re3 = RegExp(`\\(([a-zA-Z0-9/+\\^-\\s}{]+)\\) *_{(\\w)(\\s\\w){${i}}}`);
       c = c.replace(re1, ` diff($1$2, $3$$${i}) `);
       c = c.replace(re2, ` diff($1, $2$$${i+1}) `);
       c = c.replace(re3, ` diff($1, $2$$${i+1}) `);
@@ -83,9 +88,7 @@ export function latex2maple() {
       c = match_bracket(c, ['{', '}'], func + '{', f2f);
       c = match_bracket(c, ['[', ']'], func + '\\[', f2f);
     })
-    // \frac{expr1}{expr2} --> 2a/2b
-    c = c.replace(/frac/g, '');
-    c = c.replace(/}{/g, ') / (');
+
     // \ --> ""
     c = c.replace(/\\/g, '');
     c = c.replace(/\[/g, '(');
