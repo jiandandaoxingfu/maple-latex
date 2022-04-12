@@ -9,7 +9,7 @@ const md = new Remarkable({
 export function typora() {
   // 解析typora文档，支持数学公式
   let file = document.getElementById('typora-upload').files[0];
-  if (!file.name.match(/\.md$/)) return
+  if (!file.name.match(/\.(md|tex)$/)) return
   let reader = new FileReader();
   reader.onload = function() {
     let result = this.result;
