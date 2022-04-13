@@ -13,5 +13,6 @@ export function renderer(source, target) {
   if (source.tagName.toLowerCase() === 'input') {
     document.getElementById('buffer').innerHTML = '$' + document.getElementById('buffer').innerHTML + '$';
   }
-  window.MathJax.typeset([document.getElementById('buffer')], [preview_math, target]);
+  window.MathJax.typesetPromise([document.getElementById('buffer')])
+    .then( () => preview_math(target));
 }

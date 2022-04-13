@@ -17,9 +17,24 @@ function math_format(math) {
 
 export function typora() {
   // 解析typora文档，支持数学公式
-  let file = document.getElementById('typora-upload').files[0];
-  if (!file.name.match(/\.(md|tex)$/)) return
+  let file = document.getElementById('typora-upload')?.files?.[0];
   let reader = new FileReader();
+  // add loading element;
+  let div = document.createElement('div');
+  div.id = 'typora-loading';
+  div.setAttribute('style', "position: absolute; top: 45%; left: 0; width: 100%; text-align: center;");
+  div.innerHTML =`
+    <div class="ant-spin ant-spin-lg ant-spin-spinning">
+      <span class="ant-spin-dot ant-spin-dot-spin">
+        <i class="ant-spin-dot-item"></i>
+        <i class="ant-spin-dot-item"></i>
+        <i class="ant-spin-dot-item"></i>
+        <i class="ant-spin-dot-item"></i>
+      </span>
+    </div>
+  `
+  document.body.appendChild(div);
+
   reader.onload = function() {
     let result = this.result.replace(/\r\n/g, '-AAAAAAA-')
     // 将自定义的tex命令设置到tex.macros
@@ -71,9 +86,9 @@ export function typora() {
     })
 
     document.getElementById('output').innerHTML = result;
-    document.getElementById('input').value = result;
 
-    window.MathJax.typeset([document.getElementById('output')]);
+    window.MathJax.typesetPromise([document.getElementById('output')])
+      .then( () => document.body.removeChild(document.getElementById('typora-loading')) );
   }
   reader.readAsText(file);
 }

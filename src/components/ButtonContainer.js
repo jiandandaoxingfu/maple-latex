@@ -13,6 +13,7 @@ import { grammarly } from '../js/grammarly';
 import { tex_format } from '../js/tex_format';
 import { typora } from '../js/typora';
 import { styles } from '../utils/styles'
+import { dblclick } from '../utils/dblclick'
 
 const show_table = () => {
   document.getElementById('table').style.display = 'block';
@@ -52,6 +53,8 @@ function ButtonContainer() {
 
     arr.push(
       <Upload 
+        accept=".md,.tex"
+        onClick = { dblclick }
         beforeUpload = {btn_click[n-1]}
         id="typora-upload" >
               <Button
