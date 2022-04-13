@@ -36,13 +36,14 @@ function TimeLine() {
   
   return (
     <div id='timeline' style={ styles.timeline } 
-        onClick={ () => { 
-            document.getElementById('timeline').style.zIndex = document.getElementById('timeline').style.zIndex === '-3' ? 3 : -3; 
-            document.getElementById('timeline').style.display = document.getElementById('timeline').style.display !== 'block' ? 'block' : 'none';
-            if( isfetch ) return;
-            isfetch = true;
-            get_commit_history();
-          } } >
+      onClick={ () => { 
+          document.getElementById('timeline').style.zIndex = document.getElementById('timeline').style.zIndex === '-3' ? 3 : -3; 
+          document.getElementById('timeline').style.display = document.getElementById('timeline').style.display !== 'block' ? 'block' : 'none';
+          if( isfetch ) return;
+          isfetch = true;
+          get_commit_history();
+        } } >
+      <div id='timeline-container'>
       {
         commit_history?.[0] ? 
           <Timeline mode="left">
@@ -58,8 +59,9 @@ function TimeLine() {
             }
           </Timeline>
         :
-          <div style={{ textAlign: 'center', margin: '20%', marginLeft: '45%' }}><Spin size='large' /></div>
+          <Spin size='large' />
       }
+      </div>
     </div>
   )
 }

@@ -43,6 +43,21 @@
   display: none;
 }
 
-#timeline p {
-  width: 600px;
+#timeline-container {
+  position: absolute;
+  left: 10%;
+  top: 0;
+  padding: 30px;
+  width: 80%;
+  height: 100%;
+  text-align: center;
+}
+
+#timeline-container .ant-spin {
+  position: relative;
+  top: 45%;
+}
+#timeline-container ul {
+  position: relative;
+  left: -25%;
 }

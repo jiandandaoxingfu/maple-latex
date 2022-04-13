@@ -55,12 +55,10 @@ export const styles = {
   },
   timeline: {
     position: 'absolute',
-    top: '0px',
-    right: '20%',
-    padding: '30px',
-    width: '80%',
+    top: '0',
+    left: '0',
+    width: '100%',
     minHeight: '100%',
-    textAlign: 'left',
     zIndex: '-3',
     backgroundColor: 'white',
   }
