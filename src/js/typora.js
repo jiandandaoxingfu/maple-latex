@@ -22,15 +22,18 @@ export function typora() {
   let reader = new FileReader();
   reader.onload = function() {
     let result = this.result.replace(/\r\n/g, '-AAAAAAA-')
-    // 将 tex 自定义命令替换
+    // 将自定义的tex命令设置到tex.macros
+    let cmds = {};
     this.result.match(/\\newcommand{(.*?)}\[0\]{(.*?)}\r\n/g)
-      ?.map( cmd => {
-          let match = cmd.match(/\\newcommand{(.*?)}\[0\]{(.*?)}\r\n/);
-          if( match ) {
-            let reg = new RegExp(match[1].replaceAll('\\', '\\\\') + '([^a-zA-Z])', 'g');
-            result = result.replace(reg, match[2] + '$1');
-          }
+      ?.forEach( cmd => {
+          let match = cmd.match(/\\newcommand{\\(.*?)}\[0\]{(.*?)}\r\n/);
+          cmds[match[1]] = `{${match[2]}}`;
       });
+    if(window.MathJax?.config?.tex) {
+      window.MathJax.config.tex.macros = cmds;
+      window.MathJax.startup.getComponents();
+    }
+
     result = result.replace(/.*?\\begin{document}/, '')
       .replaceAll('dfrac', 'frac')
       .replace(/\\bm([^a-zA-Z])/g, ' $1')
@@ -70,7 +73,7 @@ export function typora() {
     document.getElementById('output').innerHTML = result;
     document.getElementById('input').value = result;
 
-    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, document.getElementById('output')]);
+    window.MathJax.typeset([document.getElementById('output')]);
   }
   reader.readAsText(file);
 }

@@ -4,22 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-(function() {
-  document.getElementsByTagName('head')[0].innerHTML += `
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            messageStyle: 'none',
-            tex2jax: {inlineMath: [['$','$']], preview: 'none'},
-            jax: ["input/TeX", "output/SVG"],
-            TeX: { equationNumbers: {autoNumber: ["AMS"], useLabelIds: true }}
-        });
-    </script>
-  `
-  var script = document.createElement('script');
-  script.setAttribute('type', "text/javascript");
-  script.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=default");
-  document.getElementsByTagName('head')[0].appendChild(script);
-})();
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    tags: 'ams',
+  },
+};
+
+var script = document.createElement('script');
+script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js";
+script.async = true;
+document.head.appendChild(script)
 
 // 双击左侧输入区收起
 var is_left_hide = true;

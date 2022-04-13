@@ -13,5 +13,5 @@ export function renderer(source, target) {
   if (source.tagName.toLowerCase() === 'input') {
     document.getElementById('buffer').innerHTML = '$' + document.getElementById('buffer').innerHTML + '$';
   }
-  window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, document.getElementById('buffer')], [preview_math, target]);
+  window.MathJax.typeset([document.getElementById('buffer')], [preview_math, target]);
 }
