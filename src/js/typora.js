@@ -22,12 +22,6 @@ export function typora() {
   let reader = new FileReader();
   reader.onload = function() {
     let result = this.result.replace(/\r\n/g, '-AAAAAAA-')
-      .replace(/.*?\\begin{document}/, '')
-      .replaceAll('dfrac', 'frac')
-      .replace(/\\bm([^a-zA-Z])/g, ' $1')
-      .replace(/\\chapter{(.*?)}/g, '\r\n# $1\r\n')
-      .replace(/\\section{(.*?)}/g, '\r\n## $1\r\n')
-      .replace(/\\subsection{(.*?)}/g, '\r\n### $1\r\n')
     // 将 tex 自定义命令替换
     this.result.match(/\\newcommand{(.*?)}\[0\]{(.*?)}\r\n/g)
       ?.map( cmd => {
@@ -37,6 +31,13 @@ export function typora() {
             result = result.replace(reg, match[2] + '$1');
           }
       });
+    result = result.replace(/.*?\\begin{document}/, '')
+      .replaceAll('dfrac', 'frac')
+      .replace(/\\bm([^a-zA-Z])/g, ' $1')
+      .replace(/\\chapter{(.*?)}/g, '\r\n# $1\r\n')
+      .replace(/\\section{(.*?)}/g, '\r\n## $1\r\n')
+      .replace(/\\subsection{(.*?)}/g, '\r\n### $1\r\n')
+      
     // 匹配所有数学公式，将其中</>号前后加空格，不然会被解析为html标签。
     // 将每一个公式替换为EQUATION-id，然后使用remarkable解析md，之后在替换回来，
     // 使用MathJax渲染。
@@ -52,9 +53,11 @@ export function typora() {
     })
 
     result = result.replace(/(\r\n#+.*?\r\n)/g, '\r\n$1\r\n')
-                   .replaceAll('-AAAAAAA-', '\r\n')
                    .replace(/\\/g, '')
+                   .replace(/begin{(.*?)}(.*?)end{(.*?)}/g, '\r\n<span class="highlight">$1</span>: $2 \r\n')
                    .replace(/bibitem{(.*?)}/g, '- **$1**')
+                   .replaceAll('eqref', '\\eqref')
+                   .replaceAll('-AAAAAAA-', '\r\n')
     result = md.render(result);
 
     math_inline.forEach(math => {

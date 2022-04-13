@@ -11,7 +11,7 @@ import reportWebVitals from './reportWebVitals';
             messageStyle: 'none',
             tex2jax: {inlineMath: [['$','$']], preview: 'none'},
             jax: ["input/TeX", "output/SVG"],
-            TeX: { equationNumbers: { }}
+            TeX: { equationNumbers: {autoNumber: ["AMS"], useLabelIds: true }}
         });
     </script>
   `
