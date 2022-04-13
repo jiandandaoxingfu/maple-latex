@@ -32,9 +32,6 @@ export const styles = {
     height: '100%',
     background: 'white',
     padding: '20px 40px',
-    userSelect: 'none',
-    overflowY: 'scroll',
-    userSelect: 'none',
   },
   footer: {
     textAlign: 'center',

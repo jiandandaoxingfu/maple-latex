@@ -18,6 +18,7 @@ function math_format(math) {
 export function typora() {
   // 解析typora文档，支持数学公式
   let file = document.getElementById('typora-upload')?.files?.[0];
+  if( !(file?.name.match(/\.(tex|md)$/)) ) return;
   let reader = new FileReader();
   // add loading element;
   let div = document.createElement('div');

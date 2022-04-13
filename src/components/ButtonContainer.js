@@ -53,7 +53,6 @@ function ButtonContainer() {
 
     arr.push(
       <Upload 
-        accept=".md,.tex"
         onClick = { dblclick }
         beforeUpload = {btn_click[n-1]}
         id="typora-upload" >
