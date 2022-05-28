@@ -1,4 +1,5 @@
 var islock = false;
+var is_first = true;
 
 function preview_math(target) {
   islock = false;
@@ -6,6 +7,10 @@ function preview_math(target) {
 }
 
 export function renderer(source, target) {
+  if (is_first && source.id === 'input' && source.value.length > 10000 ) {
+    is_first = false;
+    return
+  }
   if (islock) return;
   islock = true;
   let value = source.value.replace(/(beta|gamma|eta|zeta|xi|alpha|delta)/g, '$1   ');
