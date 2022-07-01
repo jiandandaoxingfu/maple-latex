@@ -51,8 +51,8 @@ export function latex2maple() {
 	lc = lc.replace(/ i\(/g, ' i (');
 	// &  --> ' '
 	// [,] \\ --> , 
-	lc = lc.replace(/&/g, " ");
-	lc = lc.replace(/(, *)?\\\\/g, ' ');
+	lc = lc.replace(/&/g, ", ");
+	lc = lc.replace(/(, *)?\\\\/g, ', ');
 	lc = lc.replace(/\\times/g, " ");
 	// \tilde{*} --> *
 	lc = match_bracket(lc, ['{', '}'], '\\\\(tilde|hat|bar|underline|acute|check|boldsymbol|mathrm){', remove_decoration);
