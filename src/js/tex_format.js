@@ -108,20 +108,20 @@ export function tex_format() {
   // a. A --> a. \n A,      
   doc = doc.replace(/([a-z]|\$|})\. {0,}([A-Z])/g, "$1.\n$2");
   // 你[.。] 我--> 你[.。] \n 我
-  doc = doc.replace(/([\u4e00-\u9fa5]|\$|})([\.。]) {0,}([\u4e00-\u9fa5])/g, "$1$2\n$3");
+  doc = doc.replace(/([\u4e00-\u9fa5]|\$|})([\.。]) {0,}([\u4e00-\u9fa5])/g, "$1$2\n$3"); // eslint-disable-line
   // a \begin{} --> a \n \begin{}
   doc = doc.replace(/(\\begin{)/g, '\n$1');
   // \begin{}{}[] a --> \begin{}{}[] \n a
   doc = doc.replace(/(\\begin{.*?}{\w+}) *([^\n])/g, '$1\n$2');
   doc = doc.replace(/(\\begin{.*?}\[[^\\]*\]) *([^\n])/g, '$1\n$2');
-  doc = doc.replace(/(\\begin{.*?}) *([^\n{\[])/g, '$1\n$2');
+  doc = doc.replace(/(\\begin{.*?}) *([^\n{\[])/g, '$1\n$2');  // eslint-disable-line
   doc = doc.replace(/(\\begin{.*?)\n\s*(\\label{.*?})/g, '$1$2');
   // a \end b --> a \n \end \n b
   doc = doc.replace(/(\\end{.*?})/g, '\n$1\n');
   // ... \n a --> ... a
-  doc = doc.replace(/( [a-zA-Z]+) *\n *([a-zA-Z]+[ ,\.;]?)/g, '$1 $2');
+  doc = doc.replace(/( [a-zA-Z]+) *\n *([a-zA-Z]+[ ,\.;]?)/g, '$1 $2'); // eslint-disable-line
   // a  a
-  doc = doc.replace(/ ([a-zA-Z]+)\s\s+([a-zA-Z]+[ ,\.;]?)/g, ' $1 $2');
+  doc = doc.replace(/ ([a-zA-Z]+)\s\s+([a-zA-Z]+[ ,\.;]?)/g, ' $1 $2'); // eslint-disable-line
   // a \\ b
   doc = doc.replace(/([a-z].*?\\\\)(.*?[a-z])/g, '$1\n$2');
 

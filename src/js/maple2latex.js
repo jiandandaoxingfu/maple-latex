@@ -60,7 +60,7 @@ function latex_format_maple(is_coeff) {
   // {{i}} --> {i}.
   lc = lc.replace(/{({\w})}/g, '$1');
   // (A_{x}) or (A) --> A_{x} or A.
-  lc = lc.replace(/\\left\(\s+(\w(_{\w+}|))\s+\\right\)\s+([^\^])/g, '$1 $3');
+  lc = lc.replace(/\\left\(\s+(\w(_{\w+}|))\s+\\right\)\s+([^\^])/g, '$1 $3'); // eslint-disable-line
   // (A_{x})^i or (A)^i --> A^i_{x} or A^i.   
   lc = lc.replace(/\\left\(\s+(\w(_{\w+}|))\s+\\right\)\s+\^({\d+})/g, '$1^$3');
   // V_{x}_{y} --> V_{x, y}
@@ -138,7 +138,7 @@ function set_input_format_szce(is_discrete) {
   format_szce = '\\begin{align}\r\n' + format_szce + '\\end{align}';
   format_szce_relation = '\\begin{align}\r\n' + format_szce_relation + '\\end{align}';
   let old_code = simple_format();
-  document.getElementById('input').value = old_code + '\r\n\r\n' + format_szce + '\r\n\r\n<hr><hr>' + '依赖关系:\r\n';
+  document.getElementById('input').value = old_code + '\r\n\r\n' + format_szce + '\r\n\r\n<hr><hr>' + '依赖关系:\r\n'; // eslint-disable-line
   document.getElementById('input').value = document.getElementById('input').value + '$' + format_szce_relation + '$<hr><hr>';
   renderer(document.getElementById('input'), document.getElementById('output'));
 }

@@ -16,5 +16,5 @@ export function excel2table() {
   }
   data = this.data_format(str_arr);
   let str = ''.padEnd(2 * columns, '|c');
-  document.getElementById('input').value += ('\r\n\ \r\n\\begin{tabular}{' + str + '|}\r\n\\hline\r\n' + data + '\\hline\r\n\\end{tabular}');
+  document.getElementById('input').value += ('\r\n\ \r\n\\begin{tabular}{' + str + '|}\r\n\\hline\r\n' + data + '\\hline\r\n\\end{tabular}'); // eslint-disable-line
 }

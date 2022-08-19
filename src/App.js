@@ -9,7 +9,7 @@ import ButtonContainer from './components/ButtonContainer';
 
 const { Sider, Header, Content, Footer } = Layout;
 
-export default () => {
+function App() {
   const inputOnchange = () => { renderer(document.getElementById('input'), document.getElementById('output')) };
 
   return (
@@ -25,9 +25,9 @@ export default () => {
             </textarea>
           </Content>
           <Footer style={ styles.footer }>  
-            Maple-Latex v2.6 ©2018-2022 Created by <a target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">JMx</a>
+            Maple-Latex v2.6 ©2018-2022 Created by <a rel="noreferrer" target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex">JMx</a>
             &nbsp;&nbsp;
-            <a target="_blank" href="https://jiandandaoxingfu.github.io/myblog/post/maple-latex/">文档</a>
+            <a rel="noreferrer" target="_blank" href="https://jiandandaoxingfu.github.io/myblog/post/maple-latex/">文档</a>
           </Footer>
         </Layout>
         <Divider dashed style={{ margin: '0 2px' }} type='vertical' />
@@ -42,8 +42,4 @@ export default () => {
   );
 }
 
-
-
-
-
-
+export default App;

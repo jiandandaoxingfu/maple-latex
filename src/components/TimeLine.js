@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Timeline, Spin } from 'antd';
 import { styles } from '../utils/styles'
 
-var isfetch = false;
-
 function TimeLine() {
   const [commit_history, setCommit_history] = useState([]);
+  const [isfetch, setIsfetch] = useState(false);
 
   const get_commit_history = async () => {
     let commit_history_ = [];
@@ -25,7 +24,7 @@ function TimeLine() {
           return commit_history_
         })
         .catch( e => {
-          isfetch = false;
+          setIsfetch(false);
           return [];
         } )
       )
@@ -40,7 +39,7 @@ function TimeLine() {
           document.getElementById('timeline').style.zIndex = document.getElementById('timeline').style.zIndex === '-3' ? 3 : -3; 
           document.getElementById('timeline').style.display = document.getElementById('timeline').style.display !== 'block' ? 'block' : 'none';
           if( isfetch ) return;
-          isfetch = true;
+          setIsfetch(true);
           get_commit_history();
         } } >
       <div id='timeline-container'>
