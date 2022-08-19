@@ -12,7 +12,7 @@ function math_format(math) {
     .replace(/\\(R|C|Z|N)([^a-zA-Z])/g, '\\mathbb{$1}$2')
     .replace(/\\part([^i])/g, '\\partial$1')
     .replace(/(^\$\$|\$\$$)/g, '$$$$$$')
-    .replaceAll('-AAAAAAA-', '\r\n');
+    .replaceAll('-AAAAAAA-', '\n');
 }
 
 export function typora() {
@@ -37,25 +37,26 @@ export function typora() {
   document.body.appendChild(div);
 
   reader.onload = function() {
-    let result = this.result.replace(/\r\n/g, '-AAAAAAA-')
+    let result = this.result.replace(/\r\n/g, '\n');
     // 将自定义的tex命令设置到tex.macros
     let cmds = {};
-    this.result.match(/\\newcommand{(.*?)}\[0\]{(.*?)}\r\n/g)
+    result.match(/\\newcommand{(.*?)}\[\d\]{(.*?)}\n/g)
       ?.forEach( cmd => {
-          let match = cmd.match(/\\newcommand{\\(.*?)}\[0\]{(.*?)}\r\n/);
-          cmds[match[1]] = `{${match[2]}}`;
+          let match = cmd.match(/\\newcommand{\\(.*?)}\[(\d)\]{(.*?)}\n/);
+          cmds[match[1]] = match[2] === '0' ? `{${match[3]}}` : [`{${match[3]}}`, 1];
       });
     if(window.MathJax?.config?.tex) {
       window.MathJax.config.tex.macros = cmds;
       window.MathJax.startup.getComponents();
     }
 
-    result = result.replace(/.*?\\begin{document}/, '')
+    result = result.replace(/\n/g, '-AAAAAAA-')
+      .replace(/.*?\\begin{document}/, '')
       .replaceAll('dfrac', 'frac')
       .replace(/\\bm([^a-zA-Z])/g, ' $1')
-      .replace(/\\chapter{(.*?)}/g, '\r\n# $1\r\n')
-      .replace(/\\section{(.*?)}/g, '\r\n## $1\r\n')
-      .replace(/\\subsection{(.*?)}/g, '\r\n### $1\r\n')
+      .replace(/\\chapter{(.*?)}/g, '\n# $1\n')
+      .replace(/\\section{(.*?)}/g, '\n## $1\n')
+      .replace(/\\subsection{(.*?)}/g, '\n### $1\n')
       
     // 匹配所有数学公式，将其中</>号前后加空格，不然会被解析为html标签。
     // 将每一个公式替换为EQUATION-id，然后使用remarkable解析md，之后在替换回来，
@@ -71,12 +72,12 @@ export function typora() {
       return math_format(math);
     })
 
-    result = result.replace(/(\r\n#+.*?\r\n)/g, '\r\n$1\r\n')
+    result = result.replace(/(\n#+.*?\n)/g, '\n$1\n')
                    .replace(/\\/g, '')
-                   .replace(/begin{(.*?)}(.*?)end{(.*?)}/g, '\r\n<span class="highlight">$1</span>: $2 \r\n')
+                   .replace(/begin{(.*?)}(.*?)end{(.*?)}/g, '\n<span class="highlight">$1</span>: $2 \n')
                    .replace(/bibitem{(.*?)}/g, '- **$1**')
                    .replaceAll('eqref', '\\eqref')
-                   .replaceAll('-AAAAAAA-', '\r\n')
+                   .replaceAll('-AAAAAAA-', '\n')
     result = md.render(result);
 
     math_inline.forEach(math => {
