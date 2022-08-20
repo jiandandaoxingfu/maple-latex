@@ -12,7 +12,10 @@ function math_format(math) {
     .replace(/\\(R|C|Z|N)([^a-zA-Z])/g, '\\mathbb{$1}$2')
     .replace(/\\part([^i])/g, '\\partial$1')
     .replace(/(^\$\$|\$\$$)/g, '$$$$$$')
-    .replaceAll('-AAAAAAA-', '\n');
+    .replaceAll('-AAAAAAA-', '\n')
+    .replace(/\\bm ([a-zA-Z0-9])/g, '\\boldsymbol $1')
+    .replace(/\\bm *(\\[a-zA-Z]+)/g, '\\boldsymbol$1')
+    .replace(/\\bm *{(.*?)}/g, '\\boldsymbol{$1}')
 }
 
 export function typora() {
@@ -37,7 +40,7 @@ export function typora() {
   document.body.appendChild(div);
 
   reader.onload = function() {
-    let result = this.result.replace(/\r\n/g, '\n');
+    let result = this.result.replace(/\r\n/g, '\n').replace(/\\bm #1/g, '\\boldsymbol #1');
     // 将自定义的tex命令设置到tex.macros
     let cmds = {};
     result.match(/\\newcommand{(.*?)}\[\d\]{(.*?)}\n/g)
@@ -53,7 +56,6 @@ export function typora() {
     result = result.replace(/\n/g, '-AAAAAAA-')
       .replace(/.*?\\begin{document}/, '')
       .replaceAll('dfrac', 'frac')
-      .replace(/\\bm([^a-zA-Z])/g, ' $1')
       .replace(/\\chapter{(.*?)}/g, '\n# $1\n')
       .replace(/\\section{(.*?)}/g, '\n## $1\n')
       .replace(/\\subsection{(.*?)}/g, '\n### $1\n')
