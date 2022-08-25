@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/maple-latex/static/css/main.3389cf63.chunk.css",
-    "main.js": "/maple-latex/static/js/main.0a97ff4b.chunk.js",
-    "main.js.map": "/maple-latex/static/js/main.0a97ff4b.chunk.js.map",
+    "main.js": "/maple-latex/static/js/main.548420fe.chunk.js",
+    "main.js.map": "/maple-latex/static/js/main.548420fe.chunk.js.map",
     "runtime-main.js": "/maple-latex/static/js/runtime-main.0fe6ba2b.js",
     "runtime-main.js.map": "/maple-latex/static/js/runtime-main.0fe6ba2b.js.map",
     "static/css/2.f3f01324.chunk.css": "/maple-latex/static/css/2.f3f01324.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.f3f01324.chunk.css",
     "static/js/2.d439a29a.chunk.js",
     "static/css/main.3389cf63.chunk.css",
-    "static/js/main.0a97ff4b.chunk.js"
+    "static/js/main.548420fe.chunk.js"
   ]
 }
