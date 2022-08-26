@@ -5,9 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 window.MathJax = {
-  loader: {
-    load: ['ui/lazy']
-  },
+  // loader: {
+  //   load: ['ui/lazy']
+  // },
   tex: {
     inlineMath: [['$', '$']],
     tags: 'ams',
