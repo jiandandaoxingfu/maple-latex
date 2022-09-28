@@ -22,9 +22,8 @@ const INSTRCUTION =  `可以实时预览数学公式(先输入数学环境)，�
 注：
     1. 个人用，不具有普适性，不保证完全正确。 
     2. 仅支持latex数学公式，其它命令不支持。
-    
-欢迎使用， 如出现错误， 希望可以把相应的tex代码和错误描述
-发送至: jiaminxin@outlook.com.
+    3. 如出现错误， 可以把相应的tex代码和错误描述
+       发送至: jiaminxin@outlook.com.
 
 Excel转列表：  
       输入框清空，将excel数据复制到输入框，点击转换按钮
@@ -70,8 +69,5 @@ grammarly:
 Tex格式化：
       格式化.tex文本。 支持断句，缩进。 
       (目前存在的bug: 以某一环境结束的段落会与下一个段落合并.)
-      
-typora:
-      读取typora生成的markdown文档并解析。
-      也可以渲染tex文件, 支持标题, 数学公式解析.
+
 `
