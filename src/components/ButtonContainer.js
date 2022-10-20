@@ -11,6 +11,7 @@ import {
 import { grammarly } from '../js/grammarly';
 import { tex_format } from '../js/tex_format';
 import { styles } from '../utils/styles'
+import { dblclick } from '../utils/dblclick'
 
 const show_table = () => {
   document.getElementById('table').style.display = 'block';
