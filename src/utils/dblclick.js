@@ -1,5 +1,4 @@
 // 双击左侧输入区收起
-document.body.addEventListener('dblclick', dblclick);
 
 export function dblclick() {
   let is_show = document.getElementById('left').style.display !== 'none';

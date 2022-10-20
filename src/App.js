@@ -6,10 +6,12 @@ import { styles } from './utils/styles';
 import Table from './components/Table';
 import TimeLine from './components/TimeLine';
 import ButtonContainer from './components/ButtonContainer';
+import { dblclick } from './utils/dblclick'
 
 const { Sider, Header, Content, Footer } = Layout;
 
 function App() {
+  document.body.addEventListener('dblclick', dblclick);
   const inputOnchange = () => { renderer(document.getElementById('input'), document.getElementById('output')) };
 
   return (
