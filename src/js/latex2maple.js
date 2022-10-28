@@ -65,6 +65,7 @@ export function latex2maple() {
 	lc = lc.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
 	// expr_{12x x x ... x} --> diff(expr, x$n)
 	lc = lc.replace(/ *_ */g, '_').replace(/{ */g, '{').replace(/ *}/g, '}');
+	lc = lc.replace(/_([xyzt])/g, '_{$1}');
 	lc = lc.replace(/(\w+)_{(\d{0,}),? ?([xyzt]( [xyzt])*)}/g, '($1$2)_{$3}') ;
 	lc = lc.split('').reverse().join('');
 	lc = match_bracket(lc, ['}', '{'], '_}', diff);
