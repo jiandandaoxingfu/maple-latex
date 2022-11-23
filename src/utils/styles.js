@@ -22,7 +22,7 @@ export const styles = {
         padding: '10px',
         overflowY: 'auto',
         height: '120px',
-        borderBottom: '4px solid #f0f2f5'
+        borderBottom: '6px solid #f0f2f5'
       },
         button: {
           borderRadius: '3px',
@@ -39,6 +39,10 @@ export const styles = {
         // border: '2px solid blue'
       },
       footer: {
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
         textAlign: 'center',
         padding: '10px 5px 10px 5px',
         background: '#f0f2f5'

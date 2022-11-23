@@ -20,20 +20,24 @@ function App() {
         <textarea id='input' style={ styles.textarea } onInput={ inputOnchange }>
         </textarea>
         <div style={ styles.footer }>  
-          ©2018-2022 
-          <a style={{ color: 'black' }} href="https://github.com/jiandandaoxingfu/maple-latex"><strong> Maple-Latex</strong></a> v2.6 &nbsp;
-          <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://jiandandaoxingfu.github.io/myblog/post/maple-latex/">
-            <strong>文档</strong>
-          </a>
-          <br/>
-          Created by 
-          <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://github.com/jiandandaoxingfu">
+          <span style={{ margin: '0px 10px' }}>
+            ©2018-2022 
+            <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex"><strong> Maple-Latex</strong></a> v2.6 &nbsp;
+            <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://jiandandaoxingfu.github.io/myblog/post/maple-latex/">
+              <strong>文档</strong>
+            </a>
+          </span>
+          <span></span>
+          <span style={{ margin: '0 10px'}}>
+            Created by 
+            <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://github.com/jiandandaoxingfu">
             <strong>  JMx  </strong>
-          </a>
-          with ❤️ and 
-          <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://reactjs.org/">
+            </a>
+            with ❤️ and 
+            <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://reactjs.org/">
             <strong>  React  </strong>
-          </a>
+            </a>
+          </span>  
         </div>
       </div>
       <div id='output' style={ styles.output }></div>       
