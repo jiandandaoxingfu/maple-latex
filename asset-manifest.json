@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/maple-latex/static/css/main.3389cf63.chunk.css",
-    "main.js": "/maple-latex/static/js/main.08a47298.chunk.js",
-    "main.js.map": "/maple-latex/static/js/main.08a47298.chunk.js.map",
-    "runtime-main.js": "/maple-latex/static/js/runtime-main.77c208ac.js",
-    "runtime-main.js.map": "/maple-latex/static/js/runtime-main.77c208ac.js.map",
+    "main.css": "/maple-latex/static/css/main.0f279fc3.chunk.css",
+    "main.js": "/maple-latex/static/js/main.a459723f.chunk.js",
+    "main.js.map": "/maple-latex/static/js/main.a459723f.chunk.js.map",
+    "runtime-main.js": "/maple-latex/static/js/runtime-main.3c71a068.js",
+    "runtime-main.js.map": "/maple-latex/static/js/runtime-main.3c71a068.js.map",
     "static/css/2.f3f01324.chunk.css": "/maple-latex/static/css/2.f3f01324.chunk.css",
-    "static/js/2.7f856970.chunk.js": "/maple-latex/static/js/2.7f856970.chunk.js",
-    "static/js/2.7f856970.chunk.js.map": "/maple-latex/static/js/2.7f856970.chunk.js.map",
-    "static/js/3.efd93e2a.chunk.js": "/maple-latex/static/js/3.efd93e2a.chunk.js",
-    "static/js/3.efd93e2a.chunk.js.map": "/maple-latex/static/js/3.efd93e2a.chunk.js.map",
+    "static/js/2.9359f45e.chunk.js": "/maple-latex/static/js/2.9359f45e.chunk.js",
+    "static/js/2.9359f45e.chunk.js.map": "/maple-latex/static/js/2.9359f45e.chunk.js.map",
+    "static/js/3.16e2ec43.chunk.js": "/maple-latex/static/js/3.16e2ec43.chunk.js",
+    "static/js/3.16e2ec43.chunk.js.map": "/maple-latex/static/js/3.16e2ec43.chunk.js.map",
     "index.html": "/maple-latex/index.html",
     "static/css/2.f3f01324.chunk.css.map": "/maple-latex/static/css/2.f3f01324.chunk.css.map",
-    "static/css/main.3389cf63.chunk.css.map": "/maple-latex/static/css/main.3389cf63.chunk.css.map",
-    "static/js/2.7f856970.chunk.js.LICENSE.txt": "/maple-latex/static/js/2.7f856970.chunk.js.LICENSE.txt"
+    "static/css/main.0f279fc3.chunk.css.map": "/maple-latex/static/css/main.0f279fc3.chunk.css.map",
+    "static/js/2.9359f45e.chunk.js.LICENSE.txt": "/maple-latex/static/js/2.9359f45e.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.77c208ac.js",
+    "static/js/runtime-main.3c71a068.js",
     "static/css/2.f3f01324.chunk.css",
-    "static/js/2.7f856970.chunk.js",
-    "static/css/main.3389cf63.chunk.css",
-    "static/js/main.08a47298.chunk.js"
+    "static/js/2.9359f45e.chunk.js",
+    "static/css/main.0f279fc3.chunk.css",
+    "static/js/main.a459723f.chunk.js"
   ]
 }
