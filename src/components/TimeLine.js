@@ -8,7 +8,7 @@ function TimeLine() {
 
   const get_commit_history = async () => {
     let commit_history_ = [];
-    for( let i=1; i<4; i++ ) {
+    for( let i=1; i<5; i++ ) {
       commit_history_.push(...await fetch(`https://api.github.com/repos/jiandandaoxingfu/maple-latex/commits?page=${i}`)
         .then( x => x.json() )
         .then( x => {
@@ -20,7 +20,7 @@ function TimeLine() {
                   msg: commit.commit.message.replace(/\n+/g, '\n').split('\n') 
                 };
               })
-              .filter( commit => ( commit.msg[0].indexOf('Merge') + commit.msg[0].indexOf('Bump') ) < -1 );
+              .filter( commit => !commit.msg[0].match(/merge|bump/i) );
           return commit_history_
         })
         .catch( e => {
