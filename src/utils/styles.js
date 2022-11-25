@@ -10,7 +10,6 @@ export const styles = {
       display: 'flex',
       width: '50%',
       height: '100%',
-      minWidth: '100px',
       minHeight: '300px',
       flexDirection: 'column',
       justifyContent: 'space-between',
@@ -49,6 +48,7 @@ export const styles = {
       },
   
     output: {
+      width: '50%',
       minWidth: '100px',
       minHeight: '300px',
       height: '100%',
