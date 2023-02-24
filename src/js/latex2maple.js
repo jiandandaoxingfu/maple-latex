@@ -61,6 +61,7 @@ export function latex2maple() {
 	// \frac{expr1}{expr2} --> 2a/2b
 	lc = match_bracket(lc, ['{', '}'], '\\\\frac{', frac);
 	// v_{n-1} --> v(n-1)
+	lc = lc.replace(/_n/g, '(n) ');
 	lc = lc.replace(/_{n}/g, '(n) ');
 	lc = lc.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
 	// expr_{12x x x ... x} --> diff(expr, x$n)
