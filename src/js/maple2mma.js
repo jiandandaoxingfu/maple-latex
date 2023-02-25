@@ -22,7 +22,11 @@ export function maple2mma() {
   })
   lc = lc.replaceAll('arc', 'Arc');
   // diff -> D
-  lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\)/g, "D[$1, $2]");
+  lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\)/g, "D[$1, $2]"); 
+  for(let i=1; i<10; i++) {
+    let re = new RegExp('diff\\(([a-zA-Z]+(\\(.*?\\))?)' + ', ([a-z])'.repeat(i) + '\\)', 'g');
+    lc = lc.replace(re, `D[$1, {$3, ${i}}]`);
+  }
   lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\$(\d+)\)/g, "D[$1, {$2, $3}]");
   // (x, ...) --> [x, ...]
   lc = lc.replace(/([a-z_\d])\(([a-z].*?)\)/g, '$1[$2]');
