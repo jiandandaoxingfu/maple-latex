@@ -103,7 +103,9 @@ export function latex2maple() {
 
 	// a_{m} --> a[m]
 	lc = lc.replace(/_ ?{(m|k|l|i|j|p|q|n)}/g, '[$1] ');
+	lc = lc.replace(/_ ?(m|k|l|i|j|p|q|n)/g, '[$1] ');
 	lc = lc.replace(/\s*?_{(\d+)}/g, '$1');
+	lc = lc.replace(/\s*?_(\d)/g, '[$1]');
 	lc = lc.replace(/_ ?{(.*?)}/g, '[$1]');
 
 	// {/} --> (/)
