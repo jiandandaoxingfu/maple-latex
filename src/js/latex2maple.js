@@ -37,6 +37,8 @@ export function latex2maple() {
 	// lc: latex code of align/array/$$, created by mathpix-snipping-tool.exe
 	// return: maple expression 
 	let lc = document.getElementById('input').value;
+	// \begin{*} \end{*} --> ''
+	lc = lc.replace(/\\(begin|end){.*?}/g, '');
 	// \right.\\ \left.
 	// \left( * \right) -->  ( * )
 	// \left[ * \right] -->  ( * )
@@ -47,9 +49,7 @@ export function latex2maple() {
 	lc = lc.replace(/\\right(\)|\]|\\})/g, ' ) ');
 	lc = lc.replace(/\\left\|(.*?)\\right\|/g, ' (abs($1)) ');
 	lc = lc.replace(/\\[bB]ig/g, '');
-	// ' i(' --> ' i (';
-	lc = lc.replace(/ i\(/g, ' i (');
-	// &  --> ' '
+	// &  --> ', '
 	// [,] \\ --> , 
 	lc = lc.replace(/&/g, ", ");
 	lc = lc.replace(/(, *)?\\\\/g, ', ');
@@ -57,7 +57,7 @@ export function latex2maple() {
 	// \tilde{*} --> *
 	lc = match_bracket(lc, ['{', '}'], '\\\\(tilde|hat|bar|underline|acute|check|boldsymbol|mathrm){', remove_decoration);
 	// \lambdax--> lambda x
-	lc = lc.replace(/\\(alpha|beta|gamma|delta|lambda|eta|zeta|xi|rho|phi|psi)([a-zA-Z])/g, '$1 $2');
+	lc = lc.replace(/\\(alpha|beta|gamma|delta|lambda|eta|zeta|xi|rho|phi|psi)([a-zA-Z(])/g, '$1 $2');
 	// \frac{expr1}{expr2} --> 2a/2b
 	lc = match_bracket(lc, ['{', '}'], '\\\\frac{', frac);
 	// v_{n-1} --> v(n-1)
@@ -110,12 +110,22 @@ export function latex2maple() {
 
 	// {/} --> (/)
 	lc = lc.replace(/{/g, ' ( ').replace(/}/g, ' ) ');
+	
+	// remove quad
+	lc = lc.replace(/q?quad/g, ' ');
 
-	// )( --> ) (
-	lc = lc.replace(/\)\(/g, ') (').replace(/ {2,}/g, " ");
+	// [)ijklIixyzt]( --> [)ijklIxyzt] (
+	lc = lc.replace(/\)\(/g, ') (');
+	lc = lc.replace(/([^a-zA-Z][ijklIxyzt])\(/g, '$1 (');
 
+	// remove extra ,
+	lc = lc.replace(/^[\n ]*,/, '').replace(/,[ \n]*$/, '').replace(/, *\n *,/g, ',\n')
+	
 	// (*) --> (ccc)
 	lc = lc.replace(/\(\*\)/g, '(ccc)');
+
+	// remove extra spaces
+	lc = lc.replace(/ {2,}/g, " ");
 
 	document.getElementById('input').value += '\r\n\r\n' + lc;
 	Notification('bottomRight', '已完成');
