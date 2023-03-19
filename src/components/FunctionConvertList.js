@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Input, Col, Row, Card } from 'antd';
 import { maple2mma } from '../js/maple2mma';
 
-const InputGroup = Input.Group;
 const ButtonGroup = Button.Group;
 
 const func_map = {
