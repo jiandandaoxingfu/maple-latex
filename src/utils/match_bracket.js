@@ -7,7 +7,7 @@
 // ..../sin/(/x+y/)... 
 // }
 
-export function match_bracket(c, bracket, func, callback) {
+export function match_bracket(c, bracket, func, callback, Func) {
   while (c.match(new RegExp(func))) {
     let m = c.match(new RegExp(func)),
         start = m.index,
@@ -18,7 +18,7 @@ export function match_bracket(c, bracket, func, callback) {
       num_l += c[end] === bracket[0];
       num_r += c[end] === bracket[1];
       if (num_l === num_r) {
-        c = callback(c, start, end, m);
+        c = callback(c, start, end, m, func, Func);
         break
       }
     }
