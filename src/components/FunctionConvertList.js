@@ -56,17 +56,7 @@ function FunctionConvertList({ display, setdisplay }) {
     const create_list = () => {
         const maple_func = get_maple_func(document.getElementById('input').value);
         if (!maple_func?.[0]) return;
-        let input_rows = [
-            <Row key={ Math.random() } >
-                <Col key={ Math.random() } style={{ overflow: 'hidden', width: '150px', marginRight: '20px', marginBottom: '7px' }} >
-                    <b>Maple</b>
-                </Col>
-                <Col><label style={{ marginRight: '34px', display: 'inline-block' }}></label></Col>
-                <Col key={ Math.random() } style={{ overflow: 'hidden', width: '150px', marginBottom: '7px' }} >
-                    <b>Mathematica</b>
-                </Col>
-            </Row>
-        ];
+        let input_rows = [];
         for(let i=0; i<maple_func.length; i++) {
             input_rows.push(
                 <Row key={ Math.random() }>
@@ -80,7 +70,11 @@ function FunctionConvertList({ display, setdisplay }) {
                 </Row>
             )
         }
-        return ( <InputGroup style={{ width: '98%' }}>{ input_rows }</InputGroup> );
+        return ( 
+            <div>
+                { input_rows }
+            </div> 
+        );
     }
 
     const close_table = () => {
@@ -90,8 +84,8 @@ function FunctionConvertList({ display, setdisplay }) {
     let styles = {
         table: {
             position: 'absolute',
-            width: '450px',
-            maxHeight: '380px',
+            width: '405px',
+            maxHeight: '410px',
             top: '150px',
             left: '0',
             right: '0',
@@ -103,7 +97,7 @@ function FunctionConvertList({ display, setdisplay }) {
         },
         inputs: {
             position: 'relative',
-            width: '450px',
+            width: '405px',
             margin: 'auto',
             maxHeight: '300px',
             overflowY: 'auto',
@@ -113,6 +107,15 @@ function FunctionConvertList({ display, setdisplay }) {
  
     return (
         <Card id="func_convert" style={ styles.table }>
+            <Row key={ Math.random() } >
+                <Col key={ Math.random() } style={{ overflow: 'hidden', width: '150px', marginRight: '20px', marginBottom: '7px' }} >
+                    <b>Maple</b>
+                </Col>
+                <Col><label style={{ marginRight: '34px', display: 'inline-block' }}></label></Col>
+                <Col key={ Math.random() } style={{ overflow: 'hidden', width: '150px', marginBottom: '7px' }} >
+                    <b>Mathematica</b>
+                </Col>
+            </Row>
             <div id='inputs' style={ styles.inputs }>
                 { display === "block" && create_list() }
             </div>
