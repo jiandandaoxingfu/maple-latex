@@ -40,12 +40,7 @@ const func_map = {
 }
 
 const get_maple_func = (maple_expr) => {
-  let maple_func = maple_expr.match(/[^a-zA-Z]?[a-zA-Z\d]+\(/g)?.map( func => {
-      if (['*', '+', '-', ' '].includes(func[0]) ) {
-          func = func.slice(1);
-      }
-      return func.slice(0, -1);
-  })
+  let maple_func = (' ' + maple_expr).match(/[^a-zA-Z\d_][a-zA-Z\d_]+\(/g)?.map( func => func.slice(1, -1) );
   maple_func = [ ...new Set(maple_func) ];
   maple_func.sort( (a, b) => (a.length < b.length) - 1 );
   return maple_func;
