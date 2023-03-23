@@ -127,6 +127,12 @@ export function latex2maple() {
 	// remove extra spaces
 	lc = lc.replace(/ {2,}/g, " ");
 
+	// (\d+) --> \d+
+	lc = lc.replace(/\( *([a-zA-Z\d]+) *\)/g, '$1');
+
+	// a ^ 2--> a^2
+	lc = lc.replace(/ *\^ */g, '^');
+
 	document.getElementById('input').value += '\r\n\r\n' + lc;
 	Notification('bottomRight', '已完成');
 }
