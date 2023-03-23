@@ -147,6 +147,8 @@ export function tex_format() {
         .replace(/(\\chapter{)/g, '\n\n\n$1')
         .replace(/(\\[a-z]*section{)/g, '\n\n\n$1')
         .replace(/(\\end{frame})/g, '$1\n\n\n')
+        .replace(/([^\n]) *\n(\\begin{(theorem|remark|proposition|proof|lemma)})/g, '$1\n\n$2')
+        .replace(/(\\end{(theorem|remark|proposition|proof|lemma)}) *\n([^\n])/g, '$1\n\n$2')
   lc = header + doc + bib + (isDoc ? '\n\\end{document}' : '');
   if( descriptions !== null ) {
     for( let i=0; i<descriptions.length; i++) {
