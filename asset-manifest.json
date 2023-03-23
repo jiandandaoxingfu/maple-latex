@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/maple-latex/static/css/main.0f279fc3.chunk.css",
-    "main.js": "/maple-latex/static/js/main.401b3283.chunk.js",
-    "main.js.map": "/maple-latex/static/js/main.401b3283.chunk.js.map",
+    "main.js": "/maple-latex/static/js/main.fff2ebb0.chunk.js",
+    "main.js.map": "/maple-latex/static/js/main.fff2ebb0.chunk.js.map",
     "runtime-main.js": "/maple-latex/static/js/runtime-main.003deb8f.js",
     "runtime-main.js.map": "/maple-latex/static/js/runtime-main.003deb8f.js.map",
     "static/css/2.f3f01324.chunk.css": "/maple-latex/static/css/2.f3f01324.chunk.css",
-    "static/js/2.bc145f63.chunk.js": "/maple-latex/static/js/2.bc145f63.chunk.js",
-    "static/js/2.bc145f63.chunk.js.map": "/maple-latex/static/js/2.bc145f63.chunk.js.map",
+    "static/js/2.b7077490.chunk.js": "/maple-latex/static/js/2.b7077490.chunk.js",
+    "static/js/2.b7077490.chunk.js.map": "/maple-latex/static/js/2.b7077490.chunk.js.map",
     "static/js/3.7283446f.chunk.js": "/maple-latex/static/js/3.7283446f.chunk.js",
     "static/js/3.7283446f.chunk.js.map": "/maple-latex/static/js/3.7283446f.chunk.js.map",
     "index.html": "/maple-latex/index.html",
     "static/css/2.f3f01324.chunk.css.map": "/maple-latex/static/css/2.f3f01324.chunk.css.map",
     "static/css/main.0f279fc3.chunk.css.map": "/maple-latex/static/css/main.0f279fc3.chunk.css.map",
-    "static/js/2.bc145f63.chunk.js.LICENSE.txt": "/maple-latex/static/js/2.bc145f63.chunk.js.LICENSE.txt"
+    "static/js/2.b7077490.chunk.js.LICENSE.txt": "/maple-latex/static/js/2.b7077490.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.003deb8f.js",
     "static/css/2.f3f01324.chunk.css",
-    "static/js/2.bc145f63.chunk.js",
+    "static/js/2.b7077490.chunk.js",
     "static/css/main.0f279fc3.chunk.css",
-    "static/js/main.401b3283.chunk.js"
+    "static/js/main.fff2ebb0.chunk.js"
   ]
 }
