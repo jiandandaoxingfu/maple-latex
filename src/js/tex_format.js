@@ -94,7 +94,7 @@ export function tex_format() {
     doc = lc.replaceAll('AAAAAAAAA', '\n');
   } else {
     doc = doc[1].replace(/\\begin{thebibliography}.*?\\end{thebibliography}/, '')
-                .replaceAll('AAAAAAAAA', '\n');
+                .replaceAll('AAAAAAAAA', '\n'); // bug: 如果参考文献列表出现在文中, 会被移到结尾
   }
   
   let bib = lc.match(/\\begin{thebibliography}.*?\\end{thebibliography}/)

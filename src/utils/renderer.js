@@ -1,5 +1,4 @@
 var islock = false;
-var is_first = true;
 
 function preview_math(target) {
   islock = false;
@@ -7,8 +6,7 @@ function preview_math(target) {
 }
 
 export function renderer(source, target) {
-  if (is_first && source.id === 'input' && source.value.length > 10000 ) {
-    is_first = false;
+  if (source.id === 'input' && source.value.length > 10000 ) {
     return
   }
   if (islock) return;
