@@ -7,6 +7,49 @@ function f2F(c, start, end, m, func, Func) {;
   return c.slice(0, start) + Func + '[' + c.slice(start + func.length + 1, end) + ']' + c.slice(end + 1, c.length);
 } 
 
+export const func_map = {
+  arctan: 'ArcTan',
+  arcsin: 'ArcSin',
+  arccos: 'ArcCos',
+  arcsinh: 'ArcSinh',
+  arccot: 'ArcCot',
+  arccosh: 'ArcCosh',
+  arctanh: 'ArcTanh',
+  arccoth: 'ArcCoth',
+  arcsec: 'ArcSec',
+  arccsc: 'ArcCsc',
+  arccsch: 'ArcCsch',
+  arcsech: 'ArcSech',
+  exp: 'Exp',
+  log: 'Log',
+  ln: 'Log',
+  sinh: 'Sinh',
+  cosh: 'Cosh',
+  sech: 'Sech',
+  csch: 'Csch',
+  coth: 'Coth',
+  tanh: 'Tanh',
+  sin: 'Sin',
+  cos: 'Cos',
+  tan: 'Tan',
+  sqrt: 'Sqrt',
+  abs: 'Abs',
+  conjugate: 'Conjugate',
+  diff: 'D',
+  JacobiTheta1: 'EllipticTheta1',
+  JacobiTheta2: 'EllipticTheta2',
+  JacobiTheta3: 'EllipticTheta3',
+  JacobiTheta4: 'EllipticTheta4',
+}
+
+export function get_maple_func() {
+  const maple_expr = document.getElementById('input').value;
+  let maple_func = (' ' + maple_expr).match(/[^a-zA-Z\d_][a-zA-Z_][a-zA-Z\d_]*?\(/g)?.map( func => func.slice(1, -1) );
+  maple_func = [ ...new Set(maple_func) ];
+  maple_func.sort( (a, b) => (a.length < b.length) - 1 );
+  return !maple_func?.[0] ? [] : maple_func;
+}
+
 export function maple2mma() {
   let maple_func_list = [...document.querySelectorAll('.maple-func')].map(e => e.value);
   let mma_func_list = [...document.querySelectorAll('.mma-func')].map(e => e.value);

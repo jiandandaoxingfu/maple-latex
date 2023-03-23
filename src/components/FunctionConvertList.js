@@ -1,55 +1,13 @@
 import React from 'react';
 import { Button, Input, Col, Row, Card } from 'antd';
-import { maple2mma } from '../js/maple2mma';
+import { maple2mma, func_map, get_maple_func } from '../js/maple2mma';
 
 const ButtonGroup = Button.Group;
 
-const func_map = {
-  arctan: 'ArcTan',
-  arcsin: 'ArcSin',
-  arccos: 'ArcCos',
-  arcsinh: 'ArcSinh',
-  arccot: 'ArcCot',
-  arccosh: 'ArcCosh',
-  arctanh: 'ArcTanh',
-  arccoth: 'ArcCoth',
-  arcsec: 'ArcSec',
-  arccsc: 'ArcCsc',
-  arccsch: 'ArcCsch',
-  arcsech: 'ArcSech',
-  exp: 'Exp',
-  log: 'Log',
-  ln: 'Log',
-  sinh: 'Sinh',
-  cosh: 'Cosh',
-  sech: 'Sech',
-  csch: 'Csch',
-  coth: 'Coth',
-  tanh: 'Tanh',
-  sin: 'Sin',
-  cos: 'Cos',
-  tan: 'Tan',
-  sqrt: 'Sqrt',
-  abs: 'Abs',
-  conjugate: 'Conjugate',
-  diff: 'D',
-  JacobiTheta1: 'EllipticTheta1',
-  JacobiTheta2: 'EllipticTheta2',
-  JacobiTheta3: 'EllipticTheta3',
-  JacobiTheta4: 'EllipticTheta4',
-}
-
-const get_maple_func = (maple_expr) => {
-  let maple_func = (' ' + maple_expr).match(/[^a-zA-Z\d_][a-zA-Z\d_]+\(/g)?.map( func => func.slice(1, -1) );
-  maple_func = [ ...new Set(maple_func) ];
-  maple_func.sort( (a, b) => (a.length < b.length) - 1 );
-  return maple_func;
-}
-
 function FunctionConvertList({ display, setdisplay }) {
     const create_list = () => {
-        const maple_func = get_maple_func(document.getElementById('input').value);
-        if (!maple_func?.[0]) return;
+        const maple_func = get_maple_func();
+        if (maple_func.length < 1) return;
         let input_rows = [];
         for(let i=0; i<maple_func.length; i++) {
             input_rows.push(
