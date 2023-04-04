@@ -54,7 +54,7 @@ export function maple2mma() {
   let maple_func_list = [...document.querySelectorAll('.maple-func')].map(e => e.value);
   let mma_func_list = [...document.querySelectorAll('.mma-func')].map(e => e.value);
   let lc = document.getElementById('input').value;
-  maple_func_list.forEach( (func, i) => {
+  maple_func_list.forEach( (func, idx) => {
     if (func === 'diff') {
       for(let i=1; i<10; i++) {
         let re = new RegExp('diff\\(([a-zA-Z_][a-zA-Z_\\d]*?([\\(\\[][^\\[\\]\\(\\)]*?[\\)\\]])?)' + ', ([a-z])'.repeat(i) + '\\)', 'g');
@@ -62,7 +62,7 @@ export function maple2mma() {
       }
       lc = lc.replace(/diff\(([^,]*?), ([a-zA-Z])\$(\d+)\)/g, "D[$1, {$2, $3}]");
     } else {
-      lc = match_bracket(lc, ['(', ')'], func + '\\(', f2F, mma_func_list[i]);
+      lc = match_bracket(lc, ['(', ')'], func + '\\(', f2F, mma_func_list[idx]);
     }
   })
   lc = lc.replace(/EllipticTheta(\d)\[/g, 'EllipticTheta[$1, ');
