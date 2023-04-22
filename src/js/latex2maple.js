@@ -19,6 +19,10 @@ function f2f(c, start, end, m) {
 function frac(c, start, end) {
 	return c.slice(0, start) + '(' + c.slice(start + 6, end) + ')/' + c.slice(end + 1, c.length);
 }
+// \frac{d x}{f(x)} --> 1/f(x) d x
+function frac_dx(c, start, end) {
+	return c.slice(0, start) + '1/(' + c.slice(start+11, end) + ') d x' + c.slice(end + 1);
+}
 // \tilde{a} --> a
 function remove_decoration(c, start, end, m) {
 	let func = m[0].slice(0, -1);
@@ -32,38 +36,62 @@ function diff(c, start, end) {
 	c_l = c_l.replace(/}[xyzt]( [xyzt])*{$/, '');
 	return c_l + `)${vars} ,${expr}(ffid ` + c.slice(end + 1, c.length);
 }
+// int_{}^{} expr d x --> int(expr, x=0..1)
+function int(c, start, end, m, func) {
+	if (func.endsWith('_{')) {
+		let lower = c.slice(start + func.length - 1, end);
+		let upper;
+		let c_ = c.slice(0, start + func.length - 3) + c.slice(end + 1);
+		m = match_bracket(c_, ['{', '}'], '\\\\int\\^{', int);
+		[end, upper] = JSON.parse(m);
+		let fdx = c_.slice(end + 1);
+		let idx = fdx.indexOf(' d ');
+		let f = fdx.slice(0, idx);
+		let x = fdx[idx + 3];
+		return c.slice(0, start) + `Int(${f}, ${x}=${lower}..${upper})` + c_.slice(end + 1 + idx + 4);
+	} else {
+		return JSON.stringify( [end, c.slice(start + func.length - 2, end)] );
+	}
+}
 
 export function latex2maple() {
 	// lc: latex code of align/array/$$, created by mathpix-snipping-tool.exe
 	// return: maple expression 
 	let lc = document.getElementById('input').value;
 	// \begin{*} \end{*} --> ''
-	lc = lc.replace(/\\(begin|end){.*?}/g, '');
+	lc = lc.replace(/\\(begin *|end *){.*?}/g, '');
+
 	// \right.\\ \left.
 	// \left( * \right) -->  ( * )
 	// \left[ * \right] -->  ( * )
 	// \left| * |\right --> (abs())
-	lc = lc.replace(/\\right\./g, '');
-	lc = lc.replace(/\\left\./g, '');
-	lc = lc.replace(/\\left(\(|\[|\\{)/g, ' ( ');
-	lc = lc.replace(/\\right(\)|\]|\\})/g, ' ) ');
-	lc = lc.replace(/\\left\|(.*?)\\right\|/g, ' (abs($1)) ');
+	lc = lc.replace(/\\right *\./g, '');
+	lc = lc.replace(/\\left *\./g, '');
+	lc = lc.replace(/\\left *(\(|\[|\\{)/g, ' ( ');
+	lc = lc.replace(/\\right *(\)|\]|\\})/g, ' ) ');
+	lc = lc.replace(/\\left *\|(.*?)\\right *\|/g, ' (abs($1)) ');
 	lc = lc.replace(/\\[bB]ig/g, '');
+
 	// &  --> ', '
 	// [,] \\ --> , 
 	lc = lc.replace(/&/g, ", ");
 	lc = lc.replace(/(, *)?\\\\/g, ', ');
 	lc = lc.replace(/\\times/g, " ");
+	lc = lc.replace(/\\infty/g, "infinity");
+	lc = lc.replace(/\\color{\w+}/g, '');
+	lc = lc.replace(/~/g, '');
+
 	// \tilde{*} --> *
 	lc = match_bracket(lc, ['{', '}'], '\\\\(tilde|hat|bar|underline|acute|check|boldsymbol|mathrm){', remove_decoration);
+	
 	// \lambdax--> lambda x
 	lc = lc.replace(/\\(alpha|beta|gamma|delta|lambda|eta|zeta|xi|rho|phi|psi)([a-zA-Z(])/g, '$1 $2');
-	// \frac{expr1}{expr2} --> 2a/2b
-	lc = match_bracket(lc, ['{', '}'], '\\\\frac{', frac);
+	
 	// v_{n-1} --> v(n-1)
 	lc = lc.replace(/_n/g, '(n) ');
 	lc = lc.replace(/_{n}/g, '(n) ');
 	lc = lc.replace(/_{n([+-])(\d+)}/g, '(n$1$2) ');
+	
 	// expr_{12x x x ... x} --> diff(expr, x$n)
 	lc = lc.replace(/ *_ */g, '_').replace(/{ */g, '{').replace(/ *}/g, '}');
 	lc = lc.replace(/_([xyzt])/g, '_{$1}');
@@ -73,6 +101,7 @@ export function latex2maple() {
 	lc = match_bracket(lc, [')', '('], '_\\)', diff);
 	lc = match_bracket(lc, [']', '['], '_\\]', diff);
 	lc = lc.split('').reverse().join('');
+	
 	// u^{+++} --> u(n+3)
 	for (let i = 0; i <= 12; i++) {
 		let re = RegExp(`([a-zA-Z0-9]+)\\^{([+-])[+-]{${i}}}`, 'g');
@@ -80,22 +109,34 @@ export function latex2maple() {
 	}
 	lc = lc.replace(/\\operatorname{([a-zA-Z]+)}/g, "\\$1 ");
 	lc = lc.replace(/ {2,}/g, " ");
+	
+	// \int_0^{+infinity} e^{-s} s^5 d s --> int(expr, s=0..infinity)
+	lc = match_bracket(lc, ['{', '}'], '\\\\frac{d ([a-zA-Z])}{', frac_dx);
+	lc = lc.replace(/\\int_([a-zA-Z0-9]+)/g, '\\int_{$1}');
+	lc = lc.replace(/\^([a-zA-Z0-9]+)/g, '^{$1}');
+	lc = match_bracket(lc, ['{', '}'], '\\\\int_{', int);
+	lc = lc.replace(/\\int (.*?) d ([a-zA-Z])/g, 'Int($1, $2)');
+		
+	// \frac{expr1}{expr2} --> 2a/2b
+	lc = match_bracket(lc, ['{', '}'], '\\\\frac{', frac);
+
 	// x^{3n + 1} --> x^(3n + 1), 
 	lc = match_bracket(lc, ['{', '}'], '\\^{', power);
+	
 	// sqrt[n]{x+y}
 	lc = match_bracket(lc, ['{', '}'], 'sqrt(\\[(.*?)\\])?{', sqrt);
+	
 	// sin t --> sin(t)
-	{
-		lc = lc.replace(/e\^/g, " \\exp ");
-		lc = lc.replace(/\\ln /g, "\\log ");
-		let func = '(exp|log|sinh|cosh|sech|csch|coth|tanh|sin|cos|tan|arccos|arcsin|arctan|arccot)';
-		let reg = new RegExp(`\\\\(${func}) ([a-zA-Z0-9])`, "g");
-		lc = lc.replace(reg, " $1($3)");
-		reg = new RegExp(`\\\\(${func}) `, "g");
-		lc = lc.replace(reg, " $1");
-		lc = match_bracket(lc, ['{', '}'], func + '{', f2f);
-		lc = match_bracket(lc, ['[', ']'], func + '\\[', f2f);
-	}
+	lc = lc.replace(/e\^/g, " \\exp ");
+	lc = lc.replace(/\\ln /g, "\\log ");
+	let func = '(exp|log|arctan|arcsin|arccos|arcsinh|arccot|arccosh|arctanh|arccoth|arcsec|arccsc|arccsch|arcsech|sinh|cosh|sech|csch|coth|tanh|sin|cos|tan|sec|csc)';
+	let reg = new RegExp(`\\\\(${func}) ([a-zA-Z0-9])`, "g");
+	lc = lc.replace(reg, " $1($3)");
+	reg = new RegExp(`\\\\(${func}) `, "g");
+	lc = lc.replace(reg, " $1");
+	lc = match_bracket(lc, ['{', '}'], func + '{', f2f);
+	lc = match_bracket(lc, ['[', ']'], func + '\\[', f2f);
+	
 	// \ --> ""
 	lc = lc.replace(/\\/g, '');
 	lc = lc.replace(/\[/g, '(');
@@ -128,7 +169,7 @@ export function latex2maple() {
 	lc = lc.replace(/ {2,}/g, " ");
 
 	// (\d+) --> \d+
-	lc = lc.replace(/\( *([a-zA-Z\d]+) *\)/g, '$1');
+	lc = lc.replace(/([ +-/()])\( *([a-zA-Z\d+]) *\)/g, '$1 $2 ');
 
 	// a ^ 2--> a^2
 	lc = lc.replace(/ *\^ */g, '^');
