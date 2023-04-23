@@ -1,0 +1,87 @@
+\frac{\int_0^{+\infty} e^{-s} s^5 d s}{2}+\frac{\int_{-\infty}^{+\infty} e^{-\frac{t^2}{2}} d t}{\int_0^{+\infty} \sin t^2 d t}\left(\frac{\sum_{n=0}^{\infty} \frac{(-1)^n}{2 n+1}}{\int_0^{+\infty} \frac{\sin x}{x} d x}+\frac{\sum_{n=1}^{\infty} \arctan \frac{2}{n^2}}{\lim _{t \rightarrow 0} \int_{-2020}^{2020} \frac{t \cos x}{x^2+t^2} d x}\right)
+
+\int_1^t \frac{\mathrm{d} x}{(x+1) \sqrt{x}}
+
+\int_{-\sqrt{1-y^2}}^{\sqrt{1-y^2}} e^{-x^2-y^2} \mathrm{~d} x
+
+\int \sec x \tan x d x
+
+\int_a^{b-\epsilon} f(x) d x
+
+\begin{aligned}
+q_1^{[1]} & =\frac{(2+2 i) e^{\frac{1}{2}[3 t+(1+i) x]}}{(1+i) e^{2 t}+e^{t+x}+(1-i) e^{2 x}}, \quad q_2^{[1]}=-\frac{4 e^{t+x}}{(1+i) e^{2 t}+e^{t+x}+(1-i) e^{2 x}}, \\
+q_3^{[1]} & =-\frac{e^{i x}\left[(1+i) e^{2 t}-e^{t+x}+(1-i) e^{2 x}\right]}{(1+i) e^{2 t}+e^{t+x}+(1-i) e^{2 x}}, \quad q_4^{[1]}=\frac{(2+2 i) e^{\frac{1}{2}(t+(3+i) x)}}{(1-i) e^{2 t}-i e^{t+x}-(1+i) e^{2 x}},
+\end{aligned}
+
+\begin{aligned}
+& u_t+c_1 u_x-\hat{c}_1 v w^*+\ell_0\left\{\frac{i}{2} u_{x x}-i\left(\sigma_1|u|^2-\sigma_1 \sigma_2|v|^2+\sigma_2|w|^2\right) u+i \sigma_2\left(w^* v_x-v w_x^*\right)\right\}=0 \\
+& v_t+c_2 v_x-\hat{c}_2 u w+\ell_0\left\{i v_{x x}-i\left(\frac{1}{2} \sigma_1|u|^2-2 \sigma_1 \sigma_2|v|^2-\sigma_2|w|^2\right) v+\frac{i}{2} w u_x+i u w_x\right\}=0 \\
+& w_t+c_3 w_x-\hat{c}_3 u^* v-\ell_0\left\{i w_{x x}-i\left(\frac{1}{2} \sigma_1|u|^2+\sigma_1 \sigma_2|v|^2+2 \sigma_2|w|^2\right) w+i \sigma_1\left(\frac{1}{2} v u_x^*+u^* v_x\right)\right\}=0
+\end{aligned}
+
+
+u_s \rightarrow\left\{\begin{array}{l}
+\operatorname{sgn}\left(\frac{s_1-s_2}{s_1+s_2}\right) i \sqrt{\frac{1}{6}} s_2 \operatorname{sech}\left[\xi_2+\frac{1}{2} \ln \left(\frac{2\left(s_1-s_2\right)^2}{3\left(s_1+s_2\right)^2}\right)\right], \xi_1 \rightarrow+\infty, \\
+\operatorname{sgn}\left(\frac{s_1+s_2}{s_1-s_2}\right) i \sqrt{\frac{1}{6}} s_2 \operatorname{sech}\left[\xi_2+\frac{1}{2} \ln \left(\frac{2\left(s_1+s_2\right)^2}{3\left(s_1-s_2\right)^2}\right)\right], \xi_1 \rightarrow-\infty,
+\end{array}\right.
+
+
+\left(\begin{array}{c}
+\frac{1}{4} v_{x x x}-\frac{3}{4} u v_x \\
+\frac{1}{64} u_{x x x x}+\frac{5}{32} u^3-\frac{3}{16} u v^2-\frac{5}{64}\left(u_x\right)^2-\frac{5}{32} u u_{x x}+\frac{1}{4}\left(v_x\right)^2+\frac{1}{16} v v_{x x}-\frac{3}{16} u w+\frac{1}{32} w_{x x} \\
+\frac{3}{8} u^2-\frac{1}{8} u_{x x}-\frac{3}{4} v^2-\frac{3}{4} w \\
+\frac{1}{8} w_{x x x}-\frac{3}{8} u w_x \\
+-\frac{1}{8} w_{x x x x x}+\frac{3}{8}\left(u w_x\right)_{x x}+\frac{1}{4}\left(w v_{x x x}-w_x v_{x x}+w_{x x} v_x-w_{x x x} v\right)+\frac{3}{4} u\left(v w_x-w v_x\right)
+\end{array}\right)
+
+\begin{gathered}
+u^{--}\left(1-u^{-} v^{-}-w^{-} s^{-}\right)-u^{-}\left(u^{-} v+w^{-} s\right) \\
+w^{--}\left(1-u^{-} v^{-}-w^{-} s^{-}\right)-w^{-}\left(u^{-} v+w^{-} s\right) \\
+v^{+}(1-u v-w s)-v\left(u^{-} v+w^{-} s\right) \\
+s^{+}(1-u v-w s)-s\left(u^{-} v+w^{-} s\right) \\
+u^{-} v+w^{-} s
+\end{gathered}
+
+\begin{aligned}
+&u_{n, t}=\frac{1}{u_{n+1} v_{n+1}}\left(\frac{1}{u_{n+2}}+\frac{1}{v_{n}}\right)-\frac{1}{u_{n-1} v_{n-1}}\left(\frac{1}{u_{n-2}}+\frac{1}{v_{n}}\right) \\
+&v_{n, t}=\frac{1}{u_{n+1} v_{n+1}}\left(\frac{1}{v_{n+2}}+\frac{1}{u_{n}}\right)-\frac{1}{u_{n-1} v_{n-1}}\left(\frac{1}{v_{n-2}}+\frac{1}{u_{n}}\right)
+\end{aligned}
+
+\begin{aligned}
+&u_{t}=-u_{x x x}+6 u u_{x}+3\left(|v|^{2}\right)_{x} \\
+&v_{t}=-v_{x x x}+6(u v)_{x}
+\end{aligned}
+
+\begin{aligned}
+q_{+} &=\frac{2 \eta_{1} \alpha_{1} \gamma_{1}^{*}\left|\alpha_{1}\right| e^{\theta_{1}-\theta_{1}^{*}}}{\left(\left|\alpha_{1}\right|^{2}+\left|\beta_{1}\right|^{2}\right)\left|\gamma_{1}\right| \cosh \left(\theta_{1}+\theta_{1}^{*}+\ln \left|\frac{\alpha_{1}}{\gamma_{1}}\right|\right)}, \\
+q_{-} &=\frac{2 \eta_{1} \beta_{1} \delta_{1}^{*}\left|\alpha_{1}\right| e^{\theta_{1}-\theta_{1}^{*}}}{\left(\left|\alpha_{1}\right|^{2}+\left|\beta_{1}\right|^{2}\right)\left|\gamma_{1}\right| \cosh \left(\theta_{1}+\theta_{1}^{*}+\ln \left|\frac{\alpha_{1}}{\gamma_{1}}\right|\right)}, \\
+q_{0} &=\frac{2 \eta_{1} \alpha_{1} \delta_{1}^{*}\left|\alpha_{1}\right| e^{\theta_{1}-\theta_{1}^{*}}}{\left(\left|\alpha_{1}\right|^{2}+\left|\beta_{1}\right|^{2}\right)\left|\gamma_{1}\right| \cosh \left(\theta_{1}+\theta_{1}^{*}+\ln \left|\frac{\alpha_{1}}{\gamma_{1}}\right|\right)}, \\
+p_{+} &=\frac{2\left|\alpha_{1}\right|^{2} \eta_{1}\left(\theta_{1}+\theta_{1}^{*}\right)}{\left(\left|\alpha_{1}\right|^{2}+\left|\beta_{1}\right|^{2}\right) \cosh ^{2}\left(\theta_{1}+\theta_{1}^{*}+\ln \left|\frac{\alpha_{1}}{\gamma_{1}}\right|\right)}+1, \\
+p_{-} &=\frac{2\left|\beta_{1}\right|^{2} \eta_{1}\left(\theta_{1}+\theta_{1}^{*}\right)}{\left(\left|\alpha_{1}\right|^{2}+\left|\beta_{1}\right|^{2}\right) \cosh ^{2}\left(\theta_{1}+\theta_{1}^{*}+\ln \left|\frac{\alpha_{1}}{\gamma_{1}}\right|\right)}+1, \\
+p_{0} &=\frac{2 \alpha_{1} \beta_{1}^{*} \eta_{1}\left(\theta_{1}+\theta_{1}^{*}\right) }{\left(\left|\alpha_{1}\right|^{2}+\left|\beta_{1}\right|^{2}\right) \cosh ^{2}\left(\theta_{1}+\theta_{1}^{*}+\ln \left|\frac{\alpha_{1}}{\gamma_{1}}\right|\right)} .
+\end{aligned}
+
+\begin{aligned}
+&\alpha_{0}\left\{u_{x x x}-\frac{3}{2} u^{2} u_{x}-\frac{3}{2}\left(u v^{2}\right)_{x}\right\}+\beta_{0}\left\{v_{x x x}-\frac{3}{2} v^{2} v_{x}-\frac{3}{2}\left(u^{2} v\right)_{x}\right\} \\
+&\alpha_{0}\left\{v_{x x x}-\frac{3}{2} v^{2} v_{x}-\frac{3}{2}\left(u^{2} v\right)_{x}\right\}+\beta_{0}\left\{u_{x x x}-\frac{3}{2} u^{2} u_{x}-\frac{3}{2}\left(u v^{2}\right)_{x}\right\}
+\end{aligned}
+
+\begin{aligned}
+&\boldsymbol{u}_{t}+\boldsymbol{u}_{x x x}+\left[3 i\left(\boldsymbol{u}_{x} \boldsymbol{s u}+\boldsymbol{u s u _ { x }}\right)-6(\boldsymbol{u s})^{2} \boldsymbol{u}\right]_{x}-3\left(\boldsymbol{v}_{x} \boldsymbol{r} \boldsymbol{u}+\boldsymbol{v} \boldsymbol{r} \boldsymbol{u}_{x}\right)-6 i(\boldsymbol{u s})(\boldsymbol{v} \boldsymbol{r}) \boldsymbol{u}=0 \\
+&\boldsymbol{v}_{t}+\boldsymbol{v}_{x x x}+\left[3 i\left(\boldsymbol{u}_{x} \boldsymbol{s} \boldsymbol{v}+\boldsymbol{u} \boldsymbol{s} \boldsymbol{v}_{x}\right)-6(\boldsymbol{u s})^{2} \boldsymbol{v}\right]_{x}-3\left(\boldsymbol{v}_{x} \boldsymbol{r} \boldsymbol{v}+\boldsymbol{v} \boldsymbol{r} \boldsymbol{v}_{x}\right)-6 i(\boldsymbol{u s})(\boldsymbol{v} \boldsymbol{r}) \boldsymbol{v}=0 \\
+&\boldsymbol{s}_{t}+\boldsymbol{s}_{x x x}-\left[3 i\left(\boldsymbol{s} \boldsymbol{u s}_{x}+\boldsymbol{s}_{x} \boldsymbol{u} \boldsymbol{s}\right)+6 \boldsymbol{s}(\boldsymbol{u} \boldsymbol{s})^{2}\right]_{x}-3\left(\boldsymbol{s}_{x} \boldsymbol{v} \boldsymbol{r}+\boldsymbol{s} \boldsymbol{v} \boldsymbol{r}_{x}\right)+6 i \boldsymbol{s}(\boldsymbol{u s})(\boldsymbol{v} \boldsymbol{r})=0 \\
+&\boldsymbol{r}_{t}+\boldsymbol{r}_{x x x}-\left[3 i\left(\boldsymbol{r} \boldsymbol{u s}_{x}+\boldsymbol{r}_{x} \boldsymbol{u} \boldsymbol{s}\right)+6 \boldsymbol{r}(\boldsymbol{u s})^{2}\right]_{x}-3\left(\boldsymbol{r}_{x} \boldsymbol{v} \boldsymbol{r}+\boldsymbol{r} \boldsymbol{v} \boldsymbol{r}_{x}\right)+6 i \boldsymbol{r}(\boldsymbol{u} \boldsymbol{s})(\boldsymbol{v} \boldsymbol{r})=0
+\end{aligned}
+
+\begin{aligned}
+&-\frac{2 \sqrt{2}}{3 c^{3 / 2}}\left[32 i c^{6} t^{3}+48 \sqrt{2} c^{5} t^{2} x-\left(48 i t x^{2}+48 t^{2}\right) c^{4}+\left(48 i \sqrt{2} t x-8 \sqrt{2} x^{3}\right) c^{3}\right. \\
+&\left.-\left(54 i t+6 \sqrt{2} s_{1}-24 x^{2}\right) c^{2}-15 \sqrt{2} c x-3 \alpha \sqrt{c}+3\right]
+\end{aligned}
+
+\frac{\eta_{1}^{2} \sqrt{9 \eta_{1}^{2}+4 \xi_{1}^{2}} \sin \left(\phi_{1}-\phi_{2}+\zeta_{5}\right)+3 \eta_{1}\left|k_{1}\right|^{2} \cosh \left(\theta_{1}-\theta_{2}\right)+\sqrt{5} \xi_{1}^{2} \eta_{1} \cosh \left(\theta_{1}+\theta_{2}+\zeta_{6}\right)}{\eta_{1}^{2}\left|k_{1}\right|^{2} \sin \left(\phi_{1}-\phi_{2}+\zeta_{7}\right)+\left|k_{1}\right|^{4} \cosh \left(\theta_{1}-\theta_{2}\right)+\xi_{1}^{2}\left|k_{1}\right|^{2} \cosh \left(\theta_{1}+\theta_{2}+\zeta_{8}\right)}
+
+\arccos \left(\frac{\left.2 \xi_{1}\left(\xi_{1}^{2}-4 \eta_{1}^{2}\right)\right)}{\left|k_{1}\right|^{2}\left(9 \eta_{1}^{2}+4 \xi_{1}^{2}\right)}\right)
+
+4 i \xi_{1} \eta_{1}\left(e^{i \phi_{2}} k_{1} \cosh \left(\theta_{1}+\zeta_{1}\right)-e^{i \phi_{1}} k_{1}^{*} \cosh \left(\theta_{2}+\zeta_{2}\right)\right)
+
+\frac{6 l_{3}}{l_{4}}\left(\frac{a_{3}^{2} k_{3}^{2} \delta_{1} \cosh \phi_{1}+a_{3}^{2} k_{3}^{2} \delta_{3} \cosh \phi_{3}}{\delta_{1} \cosh \phi_{1}+\delta_{2} \cos \phi_{2}+\delta_{3} \cosh \phi_{3}}-\frac{\left(a_{3} k_{3} \delta_{1} \sinh \phi_{1}+a_{3} k_{3} \delta_{3} \sinh \phi_{3}\right)^{2}}{\left(\delta_{1} \cosh \phi_{1}+\delta_{2} \cos \phi_{2}+\delta_{3} \cosh \phi_{3}\right)^{2}}\right)

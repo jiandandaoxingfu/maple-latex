@@ -15,6 +15,11 @@ function f2f(c, start, end, m) {
 	let func = m[0].slice(0, -1);
 	return c.slice(0, start) + func + '(' + c.slice(start + func.length + 1, end) + ')' + c.slice(end + 1, c.length);
 }
+// sin ^2 {...} --> (sin(...))^2
+function f2f2(c, start, end, m) {
+	let [func, i] = m[0].slice(0, -1).split('^');
+	return c.slice(0, start) + func + '(' + c.slice(start + func.length + 3, end) + `)^${i}` + c.slice(end + 1, c.length);
+}
 // \frac{a}{b} --> (a)/{b}
 function frac(c, start, end) {
 	return c.slice(0, start) + '(' + c.slice(start + 6, end) + ')/' + c.slice(end + 1, c.length);
@@ -65,11 +70,14 @@ export function latex2maple() {
 	// \left( * \right) -->  ( * )
 	// \left[ * \right] -->  ( * )
 	// \left| * |\right --> (abs())
+	lc = lc.replace(/\\{/g, '(');
+	lc = lc.replace(/\\}/g, ')');
 	lc = lc.replace(/\\right *\./g, '');
 	lc = lc.replace(/\\left *\./g, '');
-	lc = lc.replace(/\\left *(\(|\[|\\{)/g, ' ( ');
-	lc = lc.replace(/\\right *(\)|\]|\\})/g, ' ) ');
+	lc = lc.replace(/\\left *([([{])/g, ' ( ');
+	lc = lc.replace(/\\right *([)\]}])/g, ' ) ');
 	lc = lc.replace(/\\left *\|(.*?)\\right *\|/g, ' (abs($1)) ');
+	lc = lc.replace(/\|(.*?)\|/g, ' (abs($1)) ');
 	lc = lc.replace(/\\[bB]ig/g, '');
 
 	// &  --> ', '
@@ -80,6 +88,7 @@ export function latex2maple() {
 	lc = lc.replace(/\\infty/g, "infinity");
 	lc = lc.replace(/\\color{\w+}/g, '');
 	lc = lc.replace(/~/g, '');
+	lc = lc.replace(/\\[cdl]dot[s]/g, ' * ');
 
 	// \tilde{*} --> *
 	lc = match_bracket(lc, ['{', '}'], '\\\\(tilde|hat|bar|underline|acute|check|boldsymbol|mathrm){', remove_decoration);
@@ -126,16 +135,28 @@ export function latex2maple() {
 	// sqrt[n]{x+y}
 	lc = match_bracket(lc, ['{', '}'], 'sqrt(\\[(.*?)\\])?{', sqrt);
 	
+	// (\d+) --> \d+
+	lc = lc.replace(/([ +-/()^=_])[({] *([a-zA-Z\d+]) *[)}]/g, '$1 $2 ');
+
+	// a ^ 2--> a^2
+	lc = lc.replace(/ *\^ */g, '^');
+	lc = lc.replace(/ *_ */g, '_');
+
 	// sin t --> sin(t)
 	lc = lc.replace(/e\^/g, " \\exp ");
 	lc = lc.replace(/\\ln /g, "\\log ");
 	let func = '(exp|log|arctan|arcsin|arccos|arcsinh|arccot|arccosh|arctanh|arccoth|arcsec|arccsc|arccsch|arcsech|sinh|cosh|sech|csch|coth|tanh|sin|cos|tan|sec|csc)';
-	let reg = new RegExp(`\\\\(${func}) ([a-zA-Z0-9])`, "g");
+	let reg = new RegExp(`\\\\(${func}) (\\\\?[a-zA-Z0-9^_/]+)`, "g");
 	lc = lc.replace(reg, " $1($3)");
-	reg = new RegExp(`\\\\(${func}) `, "g");
+	reg = new RegExp(`\\\\(${func}) *`, "g");
 	lc = lc.replace(reg, " $1");
+	reg = new RegExp(`(${func}) *\\^(\\d+) *([{[(])`, "g");
+	lc = lc.replace(reg, '$1^$3$4');
 	lc = match_bracket(lc, ['{', '}'], func + '{', f2f);
 	lc = match_bracket(lc, ['[', ']'], func + '\\[', f2f);
+	lc = match_bracket(lc, ['{', '}'], func + '\\^\\d+{', f2f2);
+	lc = match_bracket(lc, ['[', ']'], func + '\\^\\d+\\[', f2f2);
+	lc = match_bracket(lc, ['(', ')'], func + '\\^\\d+\\(', f2f2);
 	
 	// \ --> ""
 	lc = lc.replace(/\\/g, '');
@@ -160,19 +181,14 @@ export function latex2maple() {
 	lc = lc.replace(/([^a-zA-Z][ijklIxyzt])\(/g, '$1 (');
 
 	// remove extra ,
-	lc = lc.replace(/^[\n ]*,/, '').replace(/,[ \n]*$/, '').replace(/, *\n *,/g, ',\n')
+	lc = lc.replace(/^[\n ]*[,.]/, '').replace(/[,.][ \n]*$/, '').replace(/, *\n *,/g, ',\n')
 	
-	// (*) --> (ccc)
-	lc = lc.replace(/\(\*\)/g, '(ccc)');
+	// f^(*) --> conjugate(f)
+	lc = (' ' + lc).replace(/([^a-zA-Z0-9_])([a-zA-Z_][a-zA-Z0-9_]*)\^\(?\*\)?/g, '$1 conjugate($2)');
+	lc = lc.replace(/\(\*\)/g, '(conj)');
 
 	// remove extra spaces
 	lc = lc.replace(/ {2,}/g, " ");
-
-	// (\d+) --> \d+
-	lc = lc.replace(/([ +-/()])\( *([a-zA-Z\d+]) *\)/g, '$1 $2 ');
-
-	// a ^ 2--> a^2
-	lc = lc.replace(/ *\^ */g, '^');
 
 	document.getElementById('input').value += '\r\n\r\n' + lc;
 	Notification('bottomRight', '已完成');
