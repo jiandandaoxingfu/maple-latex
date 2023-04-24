@@ -29,6 +29,8 @@ const INSTRCUTION =  `可以实时预览数学公式(先输入数学环境)，�
 latex2maple:
       将mathpix-snipping-tool通过图片识别生成的latex代码
       转化成maple的表达式。 目前对共轭还有问题.
+      注意, 如果tex代码不是通过mathpix-snipping-tool生成, 可能会转换失败.
+      因为每个人书写习惯不同, 情况太多, 不好处理.
 
 maple2mma:
       将复制的maple表达式转换为mathematics的表达式。
