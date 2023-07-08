@@ -42,7 +42,7 @@ function App() {
             ❤️  
             &nbsp;&nbsp;&nbsp;&nbsp;
             <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://jiandandaoxingfu.github.io/myblog/post/maple-latex/">
-              <strong>文档</strong>
+              <strong>Document</strong>
             </a>
             
           </span>  
