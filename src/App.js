@@ -28,8 +28,11 @@ function App() {
             ©2018-2023 
             <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://github.com/jiandandaoxingfu/maple-latex"><strong> Maple-Latex</strong></a> v2.6 &nbsp;
           </span>
+            <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://jiandandaoxingfu.github.io/myblog/post/maple-latex/">
+              <strong>Document</strong>
+            </a>
           <span></span>
-          <span style={{ margin: '0 10px'}}>
+          <span style={{ margin: '0 20px'}}>
             Created by 
             <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://github.com/jiandandaoxingfu">
             <strong>  JMx  </strong>
@@ -39,12 +42,7 @@ function App() {
               <strong>  React  </strong>
             </a>
             and
-            ❤️  
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <a style={{ color: 'black' }} rel="noreferrer" target="_blank" href="https://jiandandaoxingfu.github.io/myblog/post/maple-latex/">
-              <strong>Document</strong>
-            </a>
-            
+            ❤️            
           </span>  
         </div>
       </div>
